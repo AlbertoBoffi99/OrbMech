@@ -5,6 +5,7 @@
 % TO DO
 % - add check on Earth atmosphere
 % - add check on rp_norm to be higher than RE
+% - add plot
 
 %-------------------------------------------------------------------------%
 

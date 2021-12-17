@@ -53,7 +53,7 @@ optim.n_opt = 5;
 %% FUNCTION OPTIONS
 
 % options for GA
-options.ga_options = optimoptions("ga","ConstraintTolerance", 1e-6,"PopulationSize", 100, "MaxGenerations", 500, "FunctionTolerance", 1e-6, "Display", "off");
+options.ga_options = optimoptions("ga","ConstraintTolerance", 1e-6,"PopulationSize", 50, "MaxGenerations", 100, "FunctionTolerance", 1e-6, "Display", "off");
 % options for fmincon
 options.fmincon_options = optimoptions("fmincon", "Display", "off");
 % options for fsolve
