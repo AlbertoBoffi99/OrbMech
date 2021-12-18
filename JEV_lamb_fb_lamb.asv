@@ -1,4 +1,4 @@
-function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
+function [Dv_tot, results] = JEV_lamb_fb_lamb(dates, astro, options, results)
 % JEV_lamb_fb_lamb Jupiter - Venus with one Earth assisted fly-by
 % 
 % Function to compute the interplanetary trajectory:
@@ -7,7 +7,7 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
 % 3. Lambert arc Earth - Venus
 % 
 % PROTOTYPE
-%     [Dv_tot, results] = JEV_lamb_fb_lamb(dates, astro, options, results)
+%     Dv_tot = JEV_lamb_fb_lamb(dates, astro, options)
 %     
 % INPUT
 %     dates [3]         vector of mjd2000 dates: departure, flyby, arrival
@@ -17,7 +17,7 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
 %                       INPUT section
 %     
 % OUTPUT
-%     Dv_tot [3x1]      total delta velocity vector
+%     Dv_tot [3x1]      total delta velocity vector   
 %
 % CONTRIBUTORS
 %     Alberto Boffi, ...
@@ -99,5 +99,13 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
         Dv_tot= NaN;
         %warning("Perigee radius is below Earth's atmosphere")
     end
+
+    %% OUTPUT
+
+    results.T1 = DvT1;
+    results.Dv
+
+
+
 
 end

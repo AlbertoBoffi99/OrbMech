@@ -28,16 +28,15 @@ run config.m
 %% OPTIMIZATION
 
 % declare flyby modelling function as handle
-JEV = @(dates) JEV_lamb_fb_lamb(dates, astro, options);
+JEV = @(dates) JEV_lamb_fb_lamb(dates,astro,options);
 
 for i = 1:1:10
-    i
 % optimization of Dv using ga
 [results.ga_dates, results.ga_Dv] = ...
     ga(JEV, optim.ga_nvars, optim.ga_Acon, optim.ga_Bcon, ...
     [], [], [], [], [], options.ga_options);
 
-%fprintf('\n Genetic algorithm optimization conlcuded\n')
+fprintf('\n Genetic algorithm optimization conlcuded\n')
 
 % update fmincon guess according to ga result
 fmincon_guess = results.ga_dates;
@@ -45,11 +44,8 @@ fmincon_guess = results.ga_dates;
 % optimization of Dv using fmincon
 [results.fmincon_dates, results.fmincon_Dv] = fmincon(JEV, fmincon_guess, [], [], [], [], [], [], [], options.fmincon_options);
 
-results.fmincon_Dv
-results.ga_Dv
+fprintf('\n Gradient method optimization conlcuded\n')
 
-%fprintf('\n Gradient method optimization conlcuded\n')
-end
 
 %-------------------------------------------------------------------------%
 
@@ -57,14 +53,5 @@ end
 % clock stopped
 fprintf('\nExecution concluded\n')
 toc
-
-%% PLOTTING
-
-
-if options.plot
-    fprintf('\nPlotting started\n')
-    run plotting.m
-    fprintf('\Plotting concluded\n')
-end
 
 

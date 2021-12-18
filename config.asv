@@ -70,4 +70,4 @@ options.Nrev = 0;
 options.Ncase = 0;
 options.LambOptions = 1;
 % plotting options
-options.plot = 0;
+options.plot = 1;
