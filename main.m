@@ -3,8 +3,6 @@
 %   on Venus through a fly-by around the Earth
 
 % TO DO
-% - add check on Earth atmosphere
-% - add check on rp_norm to be higher than RE
 % - add plot
 
 %-------------------------------------------------------------------------%
@@ -30,26 +28,30 @@ run config.m
 % declare flyby modelling function as handle
 JEV = @(dates) JEV_lamb_fb_lamb(dates, astro, options);
 
-for i = 1:1:10
-    i
+for index = 1:1:options.noptim
+
+fprintf('\nIteration number %d started\n', index);
+
 % optimization of Dv using ga
-[results.ga_dates, results.ga_Dv] = ...
+[results.ga_dates(index, :), results.ga_Dv(index)] = ...
     ga(JEV, optim.ga_nvars, optim.ga_Acon, optim.ga_Bcon, ...
     [], [], [], [], [], options.ga_options);
 
-%fprintf('\n Genetic algorithm optimization conlcuded\n')
+% calling global function results
+global results
+
+fprintf('\nGenetic algorithm optimization conlcuded\n')
 
 % update fmincon guess according to ga result
-fmincon_guess = results.ga_dates;
+fmincon_guess = results.ga_dates(index,:);
 
 % optimization of Dv using fmincon
-[results.fmincon_dates, results.fmincon_Dv] = fmincon(JEV, fmincon_guess, [], [], [], [], [], [], [], options.fmincon_options);
+[results.fmincon_dates(index, :), results.fmincon_Dv(index)] = fmincon(JEV, fmincon_guess, [], [], [], [], [], [], [], options.fmincon_options);
 
-results.fmincon_Dv
-results.ga_Dv
-
-%fprintf('\n Gradient method optimization conlcuded\n')
+fprintf('\nGradient method optimization conlcuded\n')
 end
+
+clear index
 
 %-------------------------------------------------------------------------%
 

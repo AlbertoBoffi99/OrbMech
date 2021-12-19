@@ -3,6 +3,10 @@
 
 %-------------------------------------------------------------------------%
 
+%% STRUCUTRES DECLARATION
+
+global results
+
 %% ASTRONOMICAL DATA
 
 % Earth gravitational constant
@@ -59,15 +63,19 @@ optim.ga_nvars = 3;
 % random numbre generator settings
 % rng default
 % options for GA
-options.ga_options = optimoptions("ga","ConstraintTolerance", 1e-6,"PopulationSize", 1500, "MaxGenerations", 100, "FunctionTolerance", 1e-6, "Display", "off", 'PlotFcn',{@gaplotbestf,@gaplotstopping});
+options.ga_options = optimoptions("ga","ConstraintTolerance", 1e-6,"PopulationSize", 100, "MaxGenerations", 30, "FunctionTolerance", 1e-6, "Display", "off", 'PlotFcn',{@gaplotbestf,@gaplotstopping});
 % options for fmincon
 options.fmincon_options = optimoptions("fmincon", "Display", "off");
 % options for fsolve
 options.fsolve_options = optimset("Display", "off");
+% options for ode
+options.ode_options = odeset ('RelTol', 1e-3, 'AbsTol', 1e-3);
 % options for lambertMR
 options.orbitType = 0;
 options.Nrev = 0;
 options.Ncase = 0;
 options.LambOptions = 1;
 % plotting options
-options.plot = 0;
+options.plot = 1;
+% optimizations number
+options.noptim = 10;

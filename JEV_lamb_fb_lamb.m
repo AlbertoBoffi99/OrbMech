@@ -39,6 +39,8 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
     Ncase = options.Ncase;
     LambOptions = options.LambOptions;
     fsolveOptions = options.fsolve_options;
+    % results 
+    global results
     
     %% INITIAL PLANET STATE
     
@@ -94,10 +96,18 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
     % check on perigee radius
     if rp_norm > RE+h_atm
         % total delta velocity
-        Dv_tot= DvT1 + DvT2 + Dvfb ;
+        Dv_tot = DvT1 + DvT2 + Dvfb ;
     else
         Dv_tot= NaN;
-        %warning("Perigee radius is below Earth's atmosphere")
+        warning("Perigee radius is below Earth's atmosphere")
     end
+
+    %% OUTPUT
+
+    results.ViT1 = ViT1;
+    results.ViT2 = ViT2;
+    results.DvT1 = DvT1;
+    results.DvT2 = DvT2;
+    results.Dvfb = Dvfb;
 
 end

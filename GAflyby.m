@@ -27,6 +27,11 @@ function [rp_norm, rp, Dv_p] = GAflyby(V_min, V_plus, v_pl, mu_pl, R_pl, h_atm_p
 %     16-12-2021: v01.0
 %-------------------------------------------------------------------------%
 
+%% INPUT
+
+% results
+global results
+
 %% FLY-BY CALCULATION
 
 % infinity relative velocity at entry
@@ -78,6 +83,16 @@ rp = rp_norm * dir_rp;
 
 % flyby delta velocity at perigee
 Dv_p = norm(vp_p - vp_m);
+
+
+%% OUTPUT
+
+results.rp_norm = rp_norm;
+results.rp = rp;
+results.Dv_p = Dv_p;
+results.vp_p = vp_p;
+results.vp_m = vp_m;
+
 
 
 
