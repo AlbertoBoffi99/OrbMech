@@ -30,7 +30,7 @@ function [rp_norm, rp, Dv_p] = GAflyby(V_min, V_plus, v_pl, mu_pl, R_pl, h_atm_p
 %% INPUT
 
 % results
-global results
+global results optim
 
 %% FLY-BY CALCULATION
 

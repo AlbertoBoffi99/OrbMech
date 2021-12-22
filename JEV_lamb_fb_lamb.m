@@ -39,8 +39,8 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
     Ncase = options.Ncase;
     LambOptions = options.LambOptions;
     fsolveOptions = options.fsolve_options;
-    % results 
-    global results
+    % results and optim
+    global results optim
     
     %% INITIAL PLANET STATE
     
@@ -93,21 +93,22 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
     % performing fly-by
     [rp_norm, rp, Dvfb] = GAflyby(VfT1, ViT2, vfbE, muE, RE, h_atm, fsolveOptions);
 
+    % total delta velocity
+    Dv_tot = DvT1 + DvT2 + Dvfb;
+    optim.ga_nanflag = 0;
+
     % check on perigee radius
-    if rp_norm > RE+h_atm
-        % total delta velocity
-        Dv_tot = DvT1 + DvT2 + Dvfb ;
+    if rp_norm > RE + h_atm
+        results.ViT1 = ViT1;
+        results.ViT2 = ViT2;
+        results.DvT1 = DvT1;
+        results.DvT2 = DvT2;
+        results.Dvfb = Dvfb;
     else
-        Dv_tot= NaN;
-        warning("Perigee radius is below Earth's atmosphere")
+        optim.ga_lb = DvT1 + DvT2 + Dvfb;
+        optim.ga_nanflag = 1;
+        %warning("Perigee radius is below Earth's atmosphere")
     end
 
-    %% OUTPUT
-
-    results.ViT1 = ViT1;
-    results.ViT2 = ViT2;
-    results.DvT1 = DvT1;
-    results.DvT2 = DvT2;
-    results.Dvfb = Dvfb;
 
 end

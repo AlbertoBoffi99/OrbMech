@@ -3,7 +3,10 @@
 %   on Venus through a fly-by around the Earth
 
 % TO DO
-% - add plot
+% - comment plotting.m
+% - implement manual mesh for each window, apply multiple ga and the
+% fmincon
+% - comment main.m
 
 %-------------------------------------------------------------------------%
 
@@ -23,33 +26,88 @@ fprintf('Execution started ...\n');
 % run configuration file, containing all numerical data
 run config.m
 
-%% OPTIMIZATION
+%%  MESH OPTIMIZATION
 
 % declare flyby modelling function as handle
 JEV = @(dates) JEV_lamb_fb_lamb(dates, astro, options);
 
-for index = 1:1:options.noptim
+%
+departure.window = linspace(departure.date_min, departure.date_max, optim.nmesh_dep);
 
-fprintf('\nIteration number %d started\n', index);
+for j = 1:1:size(departure.window,2);
 
-% optimization of Dv using ga
-[results.ga_dates(index, :), results.ga_Dv(index)] = ...
-    ga(JEV, optim.ga_nvars, optim.ga_Acon, optim.ga_Bcon, ...
-    [], [], [], [], [], options.ga_options);
+    fly.window = linspace(departure.window(j) + departure.tof_min, ...
+        departure.window(j) + departure.tof_max, optim.nmesh_fly);
+    j
 
-% calling global function results
-global results
+    for k = 1:1:size(fly.window,2);
 
-fprintf('\nGenetic algorithm optimization conlcuded\n')
+        arrival.window = linspace(fly.window(k) + arrival.tof_min, ...
+            fly.window(k) + arrival.tof_max, optim.nmesh_arr);
 
-% update fmincon guess according to ga result
-fmincon_guess = results.ga_dates(index,:);
+        for z = 1:1:size(arrival.window,2);
 
-% optimization of Dv using fmincon
-[results.fmincon_dates(index, :), results.fmincon_Dv(index)] = fmincon(JEV, fmincon_guess, [], [], [], [], [], [], [], options.fmincon_options);
+            temp.dates = [departure.window(j), fly.window(k), arrival.window(z)];
+            temp.Dv = JEV(temp.dates);
 
-fprintf('\nGradient method optimization conlcuded\n')
+            global results optim
+
+            if temp.Dv < results.Dv_min
+                results.dates = temp.dates;
+                results.Dv_min = temp.Dv;
+            end
+
+            clear temp
+
+        end
+    end
 end
+
+clear j k z
+
+fprintf('\nOptimization with discretization mesh conlcuded\n')
+
+%% GA and FMINCON OPTIMIZATION
+
+for index = 1:1:optim.noptim
+
+    index
+    
+    % B constraint matrix for GA 
+    optim.ga_Bcon = [ - results.dates(1) - departure.SW; ...
+        - results.dates(2) - fly.SW; ...
+        - results.dates(3) - arrival.SW; ...
+        results.dates(1) + departure.SW; ...
+        results.dates(2) + fly.SW; ...
+        results.dates(3) + arrival.SW ];
+    
+    % optimization of Dv using ga
+    [temp.dates, temp.Dv] = ...
+        ga(JEV, optim.ga_nvars, optim.ga_Acon, optim.ga_Bcon, ...
+        [], [], optim.ga_lb, [], [], options.ga_options);
+
+    global results optim
+    
+%     % update fmincon guess according to ga result
+%     fmincon_guess = temp.dates;
+%     
+%     % optimization of Dv using fmincon
+%     [temp.dates, temp.Dv] = ...
+%         fmincon(JEV, fmincon_guess, [], [], [], [], [], [], [], options.fmincon_options);
+
+    if ~optim.ga_nanflag
+        if temp.Dv < results.Dv_min
+            results.dates = temp.dates;
+            results.Dv_min = temp.Dv
+        end
+    else index = index - 1;
+    end
+    
+    clear temp
+
+end
+
+ fprintf('\nGenetic algorithm and gradient method optimization conlcuded\n')
 
 clear index
 
