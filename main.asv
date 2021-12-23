@@ -51,7 +51,7 @@ for j = 1:1:size(departure.window,2);
             temp.dates = [departure.window(j), fly.window(k), arrival.window(z)];
             temp.Dv = JEV(temp.dates);
 
-            if temp.Dv < results.Dv_min && ~out.nanflag
+            if temp.Dv < results.Dv_min
                 results.dates = temp.dates;
                 results.Dv_min = temp.Dv;
                 results.ViT1 = out.ViT1;
@@ -77,16 +77,14 @@ fprintf('\nOptimization with discretization mesh conlcuded\n')
 
 %% GA and FMINCON OPTIMIZATION
 
-index = 1;
-
-while index < optim.noptim
+for index = 1:1:optim.noptim
 
     index
     
     % B constraint matrix for GA 
-    optim.ga_Bcon = [ - results.dates(1) + departure.SW; ...
-        - results.dates(2) + fly.SW; ...
-        - results.dates(3) + arrival.SW; ...
+    optim.ga_Bcon = [ - results.dates(1) - departure.SW; ...
+        - results.dates(2) - fly.SW; ...
+        - results.dates(3) - arrival.SW; ...
         results.dates(1) + departure.SW; ...
         results.dates(2) + fly.SW; ...
         results.dates(3) + arrival.SW ];
@@ -94,7 +92,7 @@ while index < optim.noptim
     % optimization of Dv using ga
     [temp.dates, temp.Dv] = ...
         ga(JEV, optim.ga_nvars, optim.ga_Acon, optim.ga_Bcon, ...
-        [], [], 20, [], [], options.ga_options);
+        [], [], optim.ga_lb, [], [], options.ga_options);
 
     out.nanflag
     results
@@ -115,20 +113,16 @@ while index < optim.noptim
             results.ViT2 = out.ViT2;
             results.DvT1 = out.DvT1;
             results.DvT2 = out.DvT2;
-            results.Dvfb = out.Dvfb;
-            results.rp_norm = out.rp_norm;
-            results.rp = out.rp;
-            results.vp_p = out.vp_p;
-            results.vp_m = out.vp_m;
+                results.Dvfb = out.Dvfb;
+                results.rp_norm = out.rp_norm;
+                results.rp = out.rp;
+                results.vp_p = out.vp_p;
+                results.vp_m = out.vp_m;
         end
-    else 
-        index = index - 1;
-        optim.ga_lb = out.Dv_disc;
+    else index = index - 1;
     end
     
     clear temp
-
-    index = index + 1;
 
 end
 

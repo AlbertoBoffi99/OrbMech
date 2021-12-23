@@ -5,7 +5,7 @@
 
 %% STRUCUTRES DECLARATION
 
-global results optim
+global results out
 % intila minimum delta velocity
 results.Dv_min = astroConstants(5);
 % initial dates (just not to have NaN as first date)
@@ -42,13 +42,10 @@ optim.ga_nvars = 3;
 % lower bound for GA
 optim.ga_lb = [];
 
-% perigee height flag in GA
-optim.ga_nanflag = 0;
-
 % mesh settings
-optim.nmesh_dep = 100;
-optim.nmesh_fly = 25;
-optim.nmesh_arr = 100;
+optim.nmesh_dep = 300;
+optim.nmesh_fly = 50;
+optim.nmesh_arr = 300;
 
 % optimizations number
 optim.noptim = 10;
@@ -77,9 +74,9 @@ arrival.tof_max = 2500;
 %% FUNCTION OPTIONS
 
 % random numbre generator settings
-% rng default
+rng ('shuffle')
 % options for GA
-options.ga_options = optimoptions("ga","ConstraintTolerance", 1e-6,"PopulationSize", 100, "MaxGenerations", 30, "FunctionTolerance", 1e-6, "Display", "off"); % 'PlotFcn', {@gaplotbestf,@gaplotstopping}
+options.ga_options = optimoptions("ga","ConstraintTolerance", 1e-6,"PopulationSize", 150, "MaxGenerations", 30, "FunctionTolerance", 1e-6, "Display", "off", 'PlotFcn', {@gaplotbestf,@gaplotstopping});
 % options for fmincon
 options.fmincon_options = optimoptions("fmincon", "Display", "off");
 % options for fsolve

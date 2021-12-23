@@ -1,6 +1,5 @@
-%% 
+%% PLOT INTERPLANETARY TRAJECTORY
 
-%% plot interpalnetary trajectory
 % Jupiter's position at selected departure data
 kepJ = uplanet(results.fmincon_dates(1), 5);
 [rdJ, vdJ]= kep2car(kepJ(1),kepJ(2),kepJ(3),kepJ(4),kepJ(5),kepJ(6),astro.muS);
@@ -57,7 +56,7 @@ title('Trajectory');
 grid on
 axis equal
 
-%% preliminary analysis of Lambert arc 1
+%% PRELIMINARY ANALYSIS OF FIRST LAMBERT ARC
 
 in_dep_date= date2mjd2000([2025 08 01 00 00 00]);  
 fin_dep_date= date2mjd2000([2060 08 01 00 00 00]);  
@@ -136,7 +135,7 @@ scatter(datenum(mjd20002date(results.ga_dates(1))), datenum(mjd20002date(results
 [C1, h1] = contour(x, y, (T11/(24*3600))','Black');
 clabel(C1,h1);                                              
 
-%% preliminary analysis of Lambert arc 2
+%% PRELIMINARY ANALYSIS OF SECOND LAMBERT ARC
 
 in_arr_date= date2mjd2000([2027 08 01 00 00 00]);
 fin_arr_date= date2mjd2000([2065 08 01 00 00 00]);  
@@ -207,7 +206,7 @@ scatter(datenum(mjd20002date(results.ga_dates(2))), datenum(mjd20002date(results
 [C1, h1] = contour(x, y, (T22/(24*3600))','Black');
 clabel(C1,h1);                                              
 
-%% Earth's Flyby
+%% EARTH'S FLYBY
 
 tspanH = linspace( 0, 5000, 1000 );
 % outgoing hyperpola propagation
@@ -256,9 +255,3 @@ xlabel('[km]')
 ylabel('[km]')
 zlabel('[km]')
 legend([p2 p1 p3 p4],'incoming hyperbola', 'outgoing hyperbola', 'planet velocity', 'pericenter' )
-
-%% 
-
-figure()
-plot(size(results.fmincon_Dv), results.fmincon_Dv, size(results.ga_Dv), results.ga_Dv)
-legend('fmincon', 'ga')
