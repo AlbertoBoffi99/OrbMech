@@ -3,9 +3,11 @@
 %   on Venus through a fly-by around the Earth
 
 % TO DO
-% - implement manual mesh for each window, apply multiple ga and the
+% - implement window correction on this main
+% - implement manual mesh for each window, apply multiple ga on each window and the
 % fmincon
 % - comment main.m
+% - apply parfor if possible
 
 %-------------------------------------------------------------------------%
 
