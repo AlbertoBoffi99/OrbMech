@@ -43,9 +43,9 @@ optim.ga_nvars = 3;
 optim.ga_lb = [];
 
 % mesh settings
-optim.nmesh_dep = 50;
-optim.nmesh_fly = 10;
-optim.nmesh_arr = 50;
+optim.nmesh_dep = 100;
+optim.nmesh_fly = 25;
+optim.nmesh_arr = 100;
 
 % optimizations number
 optim.noptim = 10;

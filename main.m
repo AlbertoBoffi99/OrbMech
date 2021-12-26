@@ -74,6 +74,8 @@ for j = 1:1:size(departure.window,2);
     end
 end
 
+
+delete(temp.wb)
 clear j k z temp
 
 fprintf('\nOptimization with discretization mesh conlcuded\n')
@@ -84,8 +86,11 @@ save('meshResults.mat', "results");
 
 index = 1;
 out.rp_norm = results.rp_norm;
- % non linear function for GA
-out.ga_nonlincon = @(x) rp_nonlinFcn(x, astro.RE, astro.h_atm);
+% non linear function for GA
+optim.ga_nonlincon = @(x) rp_nonlinFcn(x, astro.RE, astro.h_atm);
+% non linear function for fmincon
+optim.fmincon_nonlincon = @(x) rp_nonlinFcn(x, astro.RE, astro.h_atm);
+
 temp.wb = waitbar(0, 'GA Optimization Running ...');
 
 for index = 1:1:optim.noptim
@@ -103,21 +108,19 @@ for index = 1:1:optim.noptim
     % optimization of Dv using GA
     [temp.dates, temp.Dv] = ...
         ga(JEV, optim.ga_nvars, optim.ga_Acon, optim.ga_Bcon, ...
-        [], [], [], [], out.ga_nonlincon, [], options.ga_options);
+        [], [], [], [], optim.ga_nonlincon, [], options.ga_options);
 
-    out.nanflag
     results
-    temp
-
-%     optim.fmincon_nonlincon = @(x) rp_nonlinFcn(x, out.rp_norm, astro.RE, astro.h_atm);
     
-%     % update fmincon guess according to ga result
-%     fmincon_guess = temp.dates;
-%     
-%     % optimization of Dv using fmincon
-%     [temp.dates, temp.Dv] = ...
-%         fmincon(JEV, fmincon_guess, optim.ga_Acon, optim.ga_Bcon, ...
-%         [], [], [], [], optim.fmincon_nonlincon, options.fmincon_options);
+    % update fmincon guess according to ga result
+    fmincon_guess = temp.dates;
+    
+    % optimization of Dv using fmincon
+    [temp.dates, temp.Dv] = ...
+        fmincon(JEV, fmincon_guess, optim.ga_Acon, optim.ga_Bcon, ...
+        [], [], [], [], optim.fmincon_nonlincon, options.fmincon_options);
+
+    results
 
     if temp.Dv < results.Dv_min
         results.dates = temp.dates;
@@ -135,8 +138,9 @@ for index = 1:1:optim.noptim
 
 end
 
- fprintf('\nGenetic algorithm and gradient method optimization conlcuded\n')
+fprintf('\nGenetic algorithm and gradient method optimization conlcuded\n')
 
+delete(temp.wb)
 clear index temp
 
 %-------------------------------------------------------------------------%
