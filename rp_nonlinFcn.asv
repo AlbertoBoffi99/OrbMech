@@ -32,12 +32,8 @@ function [c, ceq] = rp_nonlinFcn(x, RE, h_atm)
 
     %% INEQUALITY CONSTRAINTS
 
-    % perigee radius has to be greater than Earth's radius + atmosphere's
-    % height
+
     if out.rp_norm < RE + h_atm
-        % if this is not true the constraint value is as high as the
-        % difference between the perigee radius and the minimum radius to
-        % satisfy
         c = abs(out.rp_norm - (RE + h_atm));
     else
         c = -1;
@@ -45,7 +41,7 @@ function [c, ceq] = rp_nonlinFcn(x, RE, h_atm)
 
      %% EQUALITY CONSTRAINTS
     
-     % no non-linear inequality constraint is set
+     % no non-linear 
      ceq = 0;
 
 end

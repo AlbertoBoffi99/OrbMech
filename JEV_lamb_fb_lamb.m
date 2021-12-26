@@ -7,7 +7,7 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
 % 3. Lambert arc Earth - Venus
 % 
 % PROTOTYPE
-%     [Dv_tot, results] = JEV_lamb_fb_lamb(dates, astro, options, results)
+%     [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
 %     
 % INPUT
 %     dates [3]         vector of mjd2000 dates: departure, flyby, arrival
@@ -28,6 +28,9 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
     
     %% INPUT
 
+    % calling global function out
+    global out 
+
     % astro
     muS = astro.muS;
     muE = astro.muE;
@@ -39,8 +42,6 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
     Ncase = options.Ncase;
     LambOptions = options.LambOptions;
     fsolveOptions = options.fsolve_options;
-    % output global function
-    global out 
     
     %% INITIAL PLANET STATE
     
@@ -98,6 +99,9 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
     out.nanflag = 0;
 
     % check on perigee radius
+    % if the perigee radius is higher than the atmosphere of the planet
+    % then save all useful  outputs, otherwise save only discarded values
+    % and a flag variable
     if rp_norm > RE + h_atm
         out.ViT1 = ViT1;
         out.ViT2 = ViT2;
@@ -113,7 +117,7 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
         out.dates_disc = dates;
         out.nanflag = 1;
         out.rp_norm = rp_norm;
-        %warning("Perigee radius is below Earth's atmosphere")
+        % warning("Perigee radius is below Earth's atmosphere")
     end
 
 
