@@ -1,14 +1,35 @@
 %% PLOT INTERPLANETARY TRAJECTORY
 
-% Jupiter's position at selected departure data
+% Jupiter's position at selected departure date
 kepJ = uplanet(results.dates(1), 5);
 [rdJ, vdJ]= kep2car(kepJ(1),kepJ(2),kepJ(3),kepJ(4),kepJ(5),kepJ(6),astro.muS);
+% Jupiter's position at selected flyby date
+kepJ2 = uplanet(results.dates(2), 5);
+[rfbJ, vfbJ2]= kep2car(kepJ2(1),kepJ2(2),kepJ2(3),kepJ2(4),kepJ2(5),kepJ2(6),astro.muS);
+% Jupiter's position at selected arrival date
+kepJ3 = uplanet(results.dates(3), 5);
+[raJ, vaJ]= kep2car(kepJ3(1),kepJ3(2),kepJ3(3),kepJ3(4),kepJ3(5),kepJ3(6),astro.muS);
+
+% Earth's position at selected departure date
+kepE1 = uplanet(results.dates(1), 3);
+[rdE, vdE]= kep2car(kepE1(1),kepE1(2),kepE1(3),kepE1(4),kepE1(5),kepE1(6),astro.muS);
 % Earth's position at selected flyby date
 kepE = uplanet(results.dates(2), 3);
 [rfbE, vfbE]= kep2car(kepE(1),kepE(2),kepE(3),kepE(4),kepE(5),kepE(6),astro.muS);
+% Earth's position at selected arrival date
+kepE3 = uplanet(results.dates(3), 3);
+[raE, vaE]= kep2car(kepE3(1),kepE3(2),kepE3(3),kepE3(4),kepE3(5),kepE3(6),astro.muS);
+
+% Venus' position at selected departure date
+kepV1 = uplanet(results.dates(1), 2);
+[rdV, vdV]= kep2car(kepV1(1),kepV1(2),kepV1(3),kepV1(4),kepV1(5),kepV1(6),astro.muS);
+% Venus' position at selected flyby date
+kepV2 = uplanet(results.dates(2), 2);
+[rfbV, vfbV]= kep2car(kepV2(1),kepV2(2),kepV2(3),kepV2(4),kepV2(5),kepV2(6),astro.muS);
 % Venus' position at selected arrival date
 kepV = uplanet(results.dates(3), 2);
 [raV, vaV]= kep2car(kepV(1),kepV(2),kepV(3),kepV(4),kepV(5),kepV(6),astro.muS);
+
 % Jupiter's orbit propagation
 TJ = 2*pi*sqrt( (kepJ(1))^3/astro.muS );              
 tspanJ = linspace( 0, TJ, 1000 );
@@ -43,11 +64,30 @@ opts.units= 's';
 planet3D('Sun', opts, [0 0 0]);  
 opts.units= 'j';
 planet3D( 'Jupiter', opts, rdJ);
+planet3D( 'Jupiter', opts, rfbJ);
+planet3D( 'Jupiter', opts, raJ);
+
 opts.units= 'p';
+planet3D('Earth', opts, rdE);
 planet3D('Earth', opts, rfbE);
+planet3D('Earth', opts, raE);
+
+planet3D( 'Venus', opts, rdV);
+planet3D( 'Venus', opts, rfbV);
 planet3D( 'Venus', opts, raV);
 
-legend('Jupiter orbit','Transfer arc 1', 'Earth orbit','Transfer arc 2','Venus orbit', 'Sun', 'Jupiter at launch','Earth at flyby', 'Venus at arrival');
+legend('Jupiter orbit','Transfer arc 1', 'Earth orbit','Transfer arc 2','Venus orbit', 'Sun');
+text(rdJ(1),rdJ(2)+1e7,rdJ(3), '\bf J_{dep}');
+text(rfbJ(1),rfbJ(2)+1e7,rfbJ(3), '\bf J_{fb}');
+text(raJ(1),raJ(2)+1e7,raJ(3), '\bf J_{arr}');
+
+text(rdE(1),rdE(2)+1e7,rdE(3), '\bf E_{dep}');
+text(rfbE(1),rfbE(2)+1e7,rfbE(3), '\bf E_{fb}');
+text(raE(1),raE(2)+1e7,raE(3), '\bf E_{arr}');
+
+text(rdV(1),rdV(2)+1e7,rdV(3), '\bf V_{dep}');
+text(rfbV(1),rfbV(2)+1e7,rfbV(3), '\bf V_{fb}');
+text(raV(1),raV(2)+1e7,raV(3), '\bf V_{arr}');
 
 xlabel("r_x[km]");
 ylabel("r_y[km]");
