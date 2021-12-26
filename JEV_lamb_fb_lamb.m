@@ -7,7 +7,7 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
 % 3. Lambert arc Earth - Venus
 % 
 % PROTOTYPE
-%     [Dv_tot, results] = JEV_lamb_fb_lamb(dates, astro, options, results)
+%     [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
 %     
 % INPUT
 %     dates [3]         vector of mjd2000 dates: departure, flyby, arrival
@@ -28,6 +28,9 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
     
     %% INPUT
 
+    % calling global function out
+    global out 
+
     % astro
     muS = astro.muS;
     muE = astro.muE;
@@ -39,8 +42,6 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
     Ncase = options.Ncase;
     LambOptions = options.LambOptions;
     fsolveOptions = options.fsolve_options;
-    % output global function
-    global out 
     
     %% INITIAL PLANET STATE
     
@@ -60,7 +61,7 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
     T1 = (dates(2) - dates(1))*24*60*60;
  
     % lambert problem for 1st arc
-    [aT1,pT,E_T,ERROR,ViT1,VfT1,TPAR,THETA] = lambertMR(rdJ,rfbE,T1,muS,orbitType,Nrev,Ncase,LambOptions);
+    [~,~,~,~,ViT1,VfT1,~,~] = lambertMR(rdJ,rfbE,T1,muS,orbitType,Nrev,Ncase,LambOptions);
     
     % 1st arc delta velocity
     DviT1x= ViT1(1)-vdJ(1);
@@ -77,7 +78,7 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
     T2 = (dates(3) - dates(2))*24*60*60;
 
     % lambert problem for 2nd arc
-    [aT2,pT,E_T,ERROR,ViT2,VfT2,TPAR,THETA] = lambertMR(rfbE,raV,T2,muS,orbitType,Nrev,Ncase,LambOptions);
+    [~,~,~,~,ViT2,VfT2,~,~] = lambertMR(rfbE,raV,T2,muS,orbitType,Nrev,Ncase,LambOptions);
     
     % 2nd arc delta velocity
     DvfT2x = vaV(1)-VfT2(1);
@@ -91,29 +92,33 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
     %% FLY-BY
     
     % performing fly-by
-    [rp_norm, rp, Dvfb, vp_p, vp_m] = GAflyby(VfT1, ViT2, vfbE, muE, RE, h_atm, fsolveOptions);
+    [rp_norm, rp, DvGA, Dvfb, vp_p, vp_m] = GAflyby(VfT1, ViT2, vfbE, muE, RE, h_atm, fsolveOptions);
 
     % total delta velocity
-    Dv_tot = DvT1 + DvT2 + Dvfb;
+    Dv_tot = DvT1 + DvT2 + DvGA;
     out.nanflag = 0;
 
     % check on perigee radius
+    % if the perigee radius is higher than the atmosphere of the planet
+    % then save all useful  outputs, otherwise save only discarded values
+    % and a flag variable
     if rp_norm > RE + h_atm
         out.ViT1 = ViT1;
         out.ViT2 = ViT2;
         out.DvT1 = DvT1;
         out.DvT2 = DvT2;
+        out.DvGA = DvGA;
         out.Dvfb = Dvfb;
         out.rp_norm = rp_norm;
         out.rp = rp;
         out.vp_p = vp_p;
         out.vp_m = vp_m;
     else
-        out.Dv_disc = DvT1 + DvT2 + Dvfb;
+        out.Dv_disc = DvT1 + DvT2 + DvGA;
         out.dates_disc = dates;
         out.nanflag = 1;
         out.rp_norm = rp_norm;
-        %warning("Perigee radius is below Earth's atmosphere")
+        % warning("Perigee radius is below Earth's atmosphere")
     end
 
 

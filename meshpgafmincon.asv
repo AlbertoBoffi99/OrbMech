@@ -7,8 +7,6 @@
 % - change plotting.m variables names
 % - change all plots to latex interpreter
 % - plot with all planets at departure, flyby, arrival
-% - add ga and fmincon plot
-% - bring Dtfb calculation outside plotting.m
 
 %-------------------------------------------------------------------------%
 
@@ -143,7 +141,7 @@ for i = 1:1:optim.noptim
         results.DvT1 = out.DvT1;
         results.DvT2 = out.DvT2;
         results.DvGA = out.DvGA;
-        results.Dvfb = out.Dvfb;
+        results.Dvfb = out.Dfb;
         results.rp = out.rp;
         results.rp_norm = out.rp_norm;
         results.hp = results.rp_norm - astro.RE;
@@ -164,6 +162,27 @@ delete(temp.wb)
 fprintf('\nExecution concluded\n')
 toc
 
+%% DATA RECORD
+
+disp(' ')
+disp('\nDATA RECORD:')
+
+fprintf('departure date: %g [mm/dd/yyyy] \n', mjd20002date(results.dates(1)));
+fprintf('fly-by date: %g [mm/dd/yyyy] \n', mjd20002date(results.dates(2)));
+fprintf('arrival date: %g [mm/dd/yyyy] \n', mjd20002date(results.dates(3)));
+
+fprintf('delta velocity to begin interplanetary trajectory: %g [km/s] \n', results.DvT1);
+fprintf('natural fly-by delta velocity: %g [km/s] \n', results.Dvfb);
+fprintf('powered fly-by delta velocity gven at the perigee: %g [km/s] \n', results.DvGA);
+fprintf('delta velocity to end interplanetary trajectory: %g [km/s] \n', results.DvT2);
+
+fprintf('height of the perigee of the fly-by trajectory: %g [km/s] \n', results.hp);
+fprintf("time spent inside Earth's SOI: %g [km/s] \n", results.Dtfb);
+
+%% SAVE RESULTS
+
+save('meshpgafmincon_results.mat', 'results');
+
 %% PLOTTING
 
 % if the user asks for plotting 
@@ -178,39 +197,7 @@ if options.plot
 
 end
 
-%% DATA RECORD
-
-% convert dates into normal date format from mjd2000
-temp.dates = results.dates;
-results.dates(1,1:6) = mjd20002date(temp.dates(1));
-results.dates(2,:) = mjd20002date(temp.dates(2));
-results.dates(3,:) = mjd20002date(temp.dates(3));
-
-fprintf('\nDATA RECORD:\n')
-
-fprintf('     departure date: %g/%g/%g [mm/dd/yyyy] \n', results.dates(1,2), results.dates(1,3), results.dates(1,1));
-fprintf('     fly-by date: %g/%g/%g [mm/dd/yyyy] \n', results.dates(2,2), results.dates(2,3), results.dates(2,1));
-fprintf('     arrival date: %g/%g/%g [mm/dd/yyyy] \n\n', results.dates(3,2), results.dates(3,3), results.dates(3,1));
-
-fprintf('     total delta velocity needed: %g [km/s] \n', results.Dv);
-fprintf('     delta velocity to begin interplanetary trajectory: %g [km/s] \n', results.DvT1);
-fprintf('     natural fly-by delta velocity: %g [km/s] \n', results.Dvfb);
-fprintf('     powered fly-by delta velocity gven at the perigee: %g [km/s] \n', results.DvGA);
-fprintf('     delta velocity to end interplanetary trajectory: %g [km/s] \n\n', results.DvT2);
-
-fprintf('     height of the perigee of the fly-by trajectory: %g [km] \n', results.hp);
-fprintf("     time spent inside Earth's SOI: %g [s] \n\n", results.Dtfb);
-
-%% SAVE RESULTS
-
-% if the user asks for saving results 
-if options.save
-
-    save('.\Results\meshpgafmincon_results.mat', 'results');
-    fprintf('Results saved\n');
-
-end
-
 % clear workspace
 clearvars -except optim astro options results
+
 

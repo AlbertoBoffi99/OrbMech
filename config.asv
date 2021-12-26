@@ -5,8 +5,9 @@
 
 %% STRUCUTRES DECLARATION
 
+global results out
 % intila minimum delta velocity
-results.Dv = astroConstants(5);
+results.Dv_min = astroConstants(5);
 % initial dates (just not to have NaN as first date)
 results.dates = [1e6 1e6 1e6];
 
@@ -56,9 +57,9 @@ departure.date_min = date2mjd2000([2025 08 01 00 00 00]);
 departure.date_max = date2mjd2000([2040 12 01 00 00 00]);
 % departure semi-window to open GA and fmincon window around a first guess
 departure.SW = 0.5*(departure.date_max - departure.date_min)/optim.nmesh_dep;
-% departure minimum ToF retreived from 1st arc's pork-chop plot
+% departure minimum ToF retreived from 1st arc's pork-cgop plot
 departure.tof_min = 100;
-% departure maximum ToF retreived from 1st arc's pork-chop plot
+% departure maximum ToF retreived from 1st arc's pork-cgop plot
 departure.tof_max = 2500;
 
 % flyby window
@@ -72,9 +73,8 @@ arrival.date_min = date2mjd2000([2040 01 01 00 00 00]);
 arrival.date_max = date2mjd2000([2065 08 01 00 00 00]);
 % arrival semi-window to open GA and fmincon window around a first guess
 arrival.SW = 0.5*(arrival.date_max - arrival.date_min)/optim.nmesh_arr;
-% arrival minimum ToF retreived from 2nd arc's pork-chop plot
+
 arrival.tof_min = 100;
-% arrival maximum ToF retreived from 2nd arc's pork-chop plot
 arrival.tof_max = 2500;
 
 %% FUNCTION OPTIONS
@@ -93,8 +93,6 @@ options.ode_options = odeset ('RelTol', 1e-3, 'AbsTol', 1e-3);
 options.orbitType = 0;
 options.Nrev = 0;
 options.Ncase = 0;
-options.LambOptions = 0;
+options.LambOptions = 1;
 % plotting options
 options.plot = 1;
-% saving options
-options.save = 1;

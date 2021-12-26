@@ -1,3 +1,8 @@
+% PLOTTING FILE
+% In this file all graphs are plotted
+
+%-------------------------------------------------------------------------%
+
 %% PLOT INTERPLANETARY TRAJECTORY
 
 % Jupiter's position at selected departure date
@@ -278,8 +283,9 @@ for kk=1:length(tspanH)
         flag2 = 0;
     end
 end
-%time spent inside the Earth's SOI
-fb_time = time1 + time2;
+
+% time spent inside the Earth's SOI
+results.Dtfb = time1 + time2;
 
 figure()  
 background('Milky Way');
