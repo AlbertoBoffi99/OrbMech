@@ -1,14 +1,35 @@
 %% PLOT INTERPLANETARY TRAJECTORY
 
-% Jupiter's position at selected departure data
-kepJ = uplanet(results.fmincon_dates(1), 5);
+% Jupiter's position at selected departure date
+kepJ = uplanet(results.dates(1), 5);
 [rdJ, vdJ]= kep2car(kepJ(1),kepJ(2),kepJ(3),kepJ(4),kepJ(5),kepJ(6),astro.muS);
+% Jupiter's position at selected flyby date
+kepJ2 = uplanet(results.dates(2), 5);
+[rfbJ, vfbJ2]= kep2car(kepJ2(1),kepJ2(2),kepJ2(3),kepJ2(4),kepJ2(5),kepJ2(6),astro.muS);
+% Jupiter's position at selected arrival date
+kepJ = uplanet(results.dates(3), 5);
+[raJ, vaJ]= kep2car(kepJ3(1),kepJ3(2),kepJ3(3),kepJ3(4),kepJ3(5),kepJ3(6),astro.muS);
+
+% Earth's position at selected departure date
+kepE1 = uplanet(results.dates(1), 3);
+[rdE, vdE]= kep2car(kepE1(1),kepE1(2),kepE1(3),kepE1(4),kepE1(5),kepE1(6),astro.muS);
 % Earth's position at selected flyby date
-kepE = uplanet(results.fmincon_dates(2), 3);
+kepE = uplanet(results.dates(2), 3);
 [rfbE, vfbE]= kep2car(kepE(1),kepE(2),kepE(3),kepE(4),kepE(5),kepE(6),astro.muS);
+% Earth's position at selected arrival date
+kepE3 = uplanet(results.dates(3), 3);
+[raE, vaE]= kep2car(kepE3(1),kepE3(2),kepE3(3),kepE3(4),kepE3(5),kepE3(6),astro.muS);
+
+% Venus' position at selected departure date
+kepV1 = uplanet(results.dates(1), 2);
+[rdV, vdV]= kep2car(kepV1(1),kepV1(2),kepV1(3),kepV1(4),kepV1(5),kepV1(6),astro.muS);
+% Venus' position at selected flyby date
+kepV2 = uplanet(results.dates(2), 2);
+[rfbV, vfbV]= kep2car(kepV2(1),kepV2(2),kepV2(3),kepV2(4),kepV2(5),kepV2(6),astro.muS);
 % Venus' position at selected arrival date
-kepV = uplanet(results.fmincon_dates(3), 2);
+kepV = uplanet(results.dates(3), 2);
 [raV, vaV]= kep2car(kepV(1),kepV(2),kepV(3),kepV(4),kepV(5),kepV(6),astro.muS);
+
 % Jupiter's orbit propagation
 TJ = 2*pi*sqrt( (kepJ(1))^3/astro.muS );              
 tspanJ = linspace( 0, TJ, 1000 );
@@ -23,8 +44,8 @@ tspanV = linspace( 0, TV, 1000 );
 [~, stateV] = ode113( @(t,s) tbp_ode(t, s, astro.muS), tspanV, [raV, vaV], options.ode_options);
 
 % Lambert arc 1 and 2 propagation
-T1 = (results.fmincon_dates(2)-results.fmincon_dates(1))*24*60*60;
-T2 = (results.fmincon_dates(3)-results.fmincon_dates(2))*24*60*60;
+T1 = (results.dates(2)-results.dates(1))*24*60*60;
+T2 = (results.dates(3)-results.dates(2))*24*60*60;
 
 tspan_t1 = linspace( 0, T1, 1000);
 [~, state_t1] = ode113( @(t,s) tbp_ode(t, s, astro.muS), tspan_t1, [rdJ, results.ViT1'], options.ode_options);
@@ -43,11 +64,26 @@ opts.units= 's';
 planet3D('Sun', opts, [0 0 0]);  
 opts.units= 'j';
 planet3D( 'Jupiter', opts, rdJ);
+planet3D( 'Jupiter', opts, rfbJ);
+planet3D( 'Jupiter', opts, raJ);
+
 opts.units= 'p';
+planet3D('Earth', opts, rdE);
 planet3D('Earth', opts, rfbE);
+planet3D('Earth', opts, raE);
+
+planet3D( 'Venus', opts, rdV);
+planet3D( 'Venus', opts, rfbV);
 planet3D( 'Venus', opts, raV);
 
-legend('Jupiter orbit','Transfer arc 1', 'Earth orbit','Transfer arc 2','Venus orbit', 'Sun', 'Jupiter at launch','Earth at flyby', 'Venus at arrival');
+legend('Jupiter orbit','Transfer arc 1', 'Earth orbit','Transfer arc 2','Venus orbit', 'Sun');
+text(rdJ(1),rdJ(2),rdJ(3), 'Jupiter at departure');
+text(rfbJ(1),rfbJ(2),rfbJ(3), 'Jupiter at flyby');
+text(raJ(1),raJ(2),raJ(3), 'Jupiter at arrival');
+
+
+
+
 
 xlabel("r_x[km]");
 ylabel("r_y[km]");
@@ -87,7 +123,8 @@ for i = 1 : n
         
         T11(i,j) = (fb_window(j)-dep_window(i))*24*60*60;   
         %flyby corresponding to the i-departure date and j-flyby date
-        [aT1(i,j),pT,E_T,ERROR,Vi1(i,j,:),Vf1(i,j,:),TPAR,THETA] = lambertMR(r1(:,i),r2(:,j),T11(i,j),astro.muS,options.orbitType,options.Nrev,options.Ncase,options.LambOptions);
+        [aT1(i,j),pT,E_T,ERROR,Vi1(i,j,:),Vf1(i,j,:),TPAR,THETA] = ...
+            lambertMR(r1(:,i),r2(:,j),T11(i,j),astro.muS,options.orbitType,options.Nrev,options.Ncase,options.LambOptions);
         Dv1x = Vi1(i,j,1)-v1(1,i);
         Dv1y = Vi1(i,j,2)-v1(2,i);
         Dv1z = Vi1(i,j,3)-v1(3,i);
@@ -109,8 +146,8 @@ end
 launch_day= mjd20002date(dep_window(r));
 flyby_day= mjd20002date(fb_window(c));
 % dates obtained from overall problem
-l_day= mjd20002date(results.fmincon_dates(1));
-fb_day= mj20002date(results.fmincon_dates(2));
+l_day= mjd20002date(results.dates(1));
+fb_day= mjd20002date(results.dates(2));
 
 figure()
 hold on
@@ -130,7 +167,7 @@ grid on
 title('Pork Chop Plot');
 
 plot(datenum(l_day),datenum(fb_day), 'd', 'LineWidth',20);
-scatter(datenum(mjd20002date(results.ga_dates(1))), datenum(mjd20002date(results.ga_dates(2))), 'LineWidth', 12);
+scatter(datenum(mjd20002date(results.dates(1))), datenum(mjd20002date(results.dates(2))), 'LineWidth', 12);
 % plot time of flight in the same contour
 [C1, h1] = contour(x, y, (T11/(24*3600))','Black');
 clabel(C1,h1);                                              
@@ -159,7 +196,8 @@ for j=1:n
         
         T22(j,k)= (arr_window(k)-fb_window(j))*24*60*60;   
 
-        [aT2(j,k),pT,E_T,ERROR,Vi2(j,k,:),Vf2(j,k,:),TPAR,THETA] = lambertMR(r2(:,j),r3(:,k),T22(j,k),astro.muS,options.orbitType,options.Nrev,options.Ncase,options.LambOptions);
+        [aT2(j,k),pT,E_T,ERROR,Vi2(j,k,:),Vf2(j,k,:),TPAR,THETA] = ...
+            lambertMR(r2(:,j),r3(:,k),T22(j,k),astro.muS,options.orbitType,options.Nrev,options.Ncase,options.LambOptions);
         Dv2x= v3(1,k)-Vf2(j,k,1);
         Dv2y= v3(2,k)-Vf2(j,k,2);
         Dv2z= v3(3,k)-Vf2(j,k,3);
@@ -180,8 +218,8 @@ end
 flyby_day= mjd20002date(fb_window(r));
 arrival_day= mjd20002date(arr_window(c));
 % dates obtained from overall problem
-fb_day= mjd20002date(results.fmincon_dates(2));
-a_day= mjd20002date(results.fmincon_dates(3));
+fb_day= mjd20002date(results.dates(2));
+a_day= mjd20002date(results.dates(3));
 
 figure()
 hold on
@@ -200,7 +238,7 @@ Color.Label.String= 'Delta V2 [km/s]';
 grid on
 title('Pork Chop Plot');
 plot(datenum(fb_day),datenum(a_day), 'd', 'LineWidth',20);
-scatter(datenum(mjd20002date(results.ga_dates(2))), datenum(mjd20002date(results.ga_dates(3))), 'LineWidth', 12);
+scatter(datenum(mjd20002date(results.dates(2))), datenum(mjd20002date(results.dates(3))), 'LineWidth', 12);
 
 
 [C1, h1] = contour(x, y, (T22/(24*3600))','Black');
@@ -208,7 +246,7 @@ clabel(C1,h1);
 
 %% EARTH'S FLYBY
 
-tspanH = linspace( 0, 5000, 1000 );
+tspanH = linspace( 0, 100000, 1000 );
 % outgoing hyperpola propagation
 [timeH1, stateH1] = ode113( @(t,s) tbp_ode(t, s, astro.muE), tspanH, [results.rp,results.vp_p], options.ode_options);
 %incoming hyperbola propagation
@@ -236,6 +274,10 @@ for kk=1:length(tspanH)
 end
 %time spent inside the Earth's SOI
 fb_time = time1 + time2;
+
+tspanH = linspace( 0, 5000, 1000 );
+[timeH1, stateH1] = ode113( @(t,s) tbp_ode(t, s, astro.muE), tspanH, [results.rp, results.vp_p], options.ode_options);
+[timeH2, stateH2] = ode113( @(t,s) tbp_ode(t, s, astro.muE), -tspanH, [results.rp, results.vp_m], options.ode_options);
 
 figure()  
 p1 = plot3( stateH1(:,1), stateH1(:,2), stateH1(:,3), 'red', 'linewidth', 2);   %outgoing hyperbola  
