@@ -210,7 +210,7 @@ clabel(C1,h1);
 
 %% EARTH'S FLYBY
 
-tspanH = linspace( 0, 5000, 1000 );
+tspanH = linspace( 0, 100000, 1000 );
 % outgoing hyperpola propagation
 [timeH1, stateH1] = ode113( @(t,s) tbp_ode(t, s, astro.muE), tspanH, [results.rp,results.vp_p], options.ode_options);
 %incoming hyperbola propagation
@@ -238,6 +238,10 @@ for kk=1:length(tspanH)
 end
 %time spent inside the Earth's SOI
 fb_time = time1 + time2;
+
+tspanH = linspace( 0, 5000, 1000 );
+[timeH1, stateH1] = ode113( @(t,s) tbp_ode(t, s, astro.muE), tspanH, [results.rp, results.vp_p], options.ode_options);
+[timeH2, stateH2] = ode113( @(t,s) tbp_ode(t, s, astro.muE), -tspanH, [results.rp, results.vp_m], options.ode_options);
 
 figure()  
 p1 = plot3( stateH1(:,1), stateH1(:,2), stateH1(:,3), 'red', 'linewidth', 2);   %outgoing hyperbola  
