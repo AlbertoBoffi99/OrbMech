@@ -1,13 +1,13 @@
 %% PLOT INTERPLANETARY TRAJECTORY
 
 % Jupiter's position at selected departure data
-kepJ = uplanet(results.fmincon_dates(1), 5);
+kepJ = uplanet(results.dates(1), 5);
 [rdJ, vdJ]= kep2car(kepJ(1),kepJ(2),kepJ(3),kepJ(4),kepJ(5),kepJ(6),astro.muS);
 % Earth's position at selected flyby date
-kepE = uplanet(results.fmincon_dates(2), 3);
+kepE = uplanet(results.dates(2), 3);
 [rfbE, vfbE]= kep2car(kepE(1),kepE(2),kepE(3),kepE(4),kepE(5),kepE(6),astro.muS);
 % Venus' position at selected arrival date
-kepV = uplanet(results.fmincon_dates(3), 2);
+kepV = uplanet(results.dates(3), 2);
 [raV, vaV]= kep2car(kepV(1),kepV(2),kepV(3),kepV(4),kepV(5),kepV(6),astro.muS);
 % Jupiter's orbit propagation
 TJ = 2*pi*sqrt( (kepJ(1))^3/astro.muS );              
@@ -23,8 +23,8 @@ tspanV = linspace( 0, TV, 1000 );
 [~, stateV] = ode113( @(t,s) tbp_ode(t, s, astro.muS), tspanV, [raV, vaV], options.ode_options);
 
 % Lambert arc 1 and 2 propagation
-T1 = (results.fmincon_dates(2)-results.fmincon_dates(1))*24*60*60;
-T2 = (results.fmincon_dates(3)-results.fmincon_dates(2))*24*60*60;
+T1 = (results.dates(2)-results.dates(1))*24*60*60;
+T2 = (results.dates(3)-results.dates(2))*24*60*60;
 
 tspan_t1 = linspace( 0, T1, 1000);
 [~, state_t1] = ode113( @(t,s) tbp_ode(t, s, astro.muS), tspan_t1, [rdJ, results.ViT1'], options.ode_options);
@@ -87,7 +87,8 @@ for i = 1 : n
         
         T11(i,j) = (fb_window(j)-dep_window(i))*24*60*60;   
         %flyby corresponding to the i-departure date and j-flyby date
-        [aT1(i,j),pT,E_T,ERROR,Vi1(i,j,:),Vf1(i,j,:),TPAR,THETA] = lambertMR(r1(:,i),r2(:,j),T11(i,j),astro.muS,options.orbitType,options.Nrev,options.Ncase,options.LambOptions);
+        [aT1(i,j),pT,E_T,ERROR,Vi1(i,j,:),Vf1(i,j,:),TPAR,THETA] = ...
+            lambertMR(r1(:,i),r2(:,j),T11(i,j),astro.muS,options.orbitType,options.Nrev,options.Ncase,options.LambOptions);
         Dv1x = Vi1(i,j,1)-v1(1,i);
         Dv1y = Vi1(i,j,2)-v1(2,i);
         Dv1z = Vi1(i,j,3)-v1(3,i);
@@ -109,8 +110,8 @@ end
 launch_day= mjd20002date(dep_window(r));
 flyby_day= mjd20002date(fb_window(c));
 % dates obtained from overall problem
-l_day= mjd20002date(results.fmincon_dates(1));
-fb_day= mj20002date(results.fmincon_dates(2));
+l_day= mjd20002date(results.dates(1));
+fb_day= mjd20002date(results.dates(2));
 
 figure()
 hold on
@@ -130,7 +131,7 @@ grid on
 title('Pork Chop Plot');
 
 plot(datenum(l_day),datenum(fb_day), 'd', 'LineWidth',20);
-scatter(datenum(mjd20002date(results.ga_dates(1))), datenum(mjd20002date(results.ga_dates(2))), 'LineWidth', 12);
+scatter(datenum(mjd20002date(results.dates(1))), datenum(mjd20002date(results.dates(2))), 'LineWidth', 12);
 % plot time of flight in the same contour
 [C1, h1] = contour(x, y, (T11/(24*3600))','Black');
 clabel(C1,h1);                                              
@@ -159,7 +160,8 @@ for j=1:n
         
         T22(j,k)= (arr_window(k)-fb_window(j))*24*60*60;   
 
-        [aT2(j,k),pT,E_T,ERROR,Vi2(j,k,:),Vf2(j,k,:),TPAR,THETA] = lambertMR(r2(:,j),r3(:,k),T22(j,k),astro.muS,options.orbitType,options.Nrev,options.Ncase,options.LambOptions);
+        [aT2(j,k),pT,E_T,ERROR,Vi2(j,k,:),Vf2(j,k,:),TPAR,THETA] = ...
+            lambertMR(r2(:,j),r3(:,k),T22(j,k),astro.muS,options.orbitType,options.Nrev,options.Ncase,options.LambOptions);
         Dv2x= v3(1,k)-Vf2(j,k,1);
         Dv2y= v3(2,k)-Vf2(j,k,2);
         Dv2z= v3(3,k)-Vf2(j,k,3);
@@ -180,8 +182,8 @@ end
 flyby_day= mjd20002date(fb_window(r));
 arrival_day= mjd20002date(arr_window(c));
 % dates obtained from overall problem
-fb_day= mjd20002date(results.fmincon_dates(2));
-a_day= mjd20002date(results.fmincon_dates(3));
+fb_day= mjd20002date(results.dates(2));
+a_day= mjd20002date(results.dates(3));
 
 figure()
 hold on
@@ -200,7 +202,7 @@ Color.Label.String= 'Delta V2 [km/s]';
 grid on
 title('Pork Chop Plot');
 plot(datenum(fb_day),datenum(a_day), 'd', 'LineWidth',20);
-scatter(datenum(mjd20002date(results.ga_dates(2))), datenum(mjd20002date(results.ga_dates(3))), 'LineWidth', 12);
+scatter(datenum(mjd20002date(results.dates(2))), datenum(mjd20002date(results.dates(3))), 'LineWidth', 12);
 
 
 [C1, h1] = contour(x, y, (T22/(24*3600))','Black');

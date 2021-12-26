@@ -43,9 +43,9 @@ optim.ga_nvars = 3;
 optim.ga_lb = [];
 
 % mesh settings
-optim.nmesh_dep = 300;
-optim.nmesh_fly = 50;
-optim.nmesh_arr = 300;
+optim.nmesh_dep = 50;
+optim.nmesh_fly = 10;
+optim.nmesh_arr = 50;
 
 % optimizations number
 optim.noptim = 10;
@@ -76,7 +76,7 @@ arrival.tof_max = 2500;
 % random numbre generator settings
 rng ('shuffle')
 % options for GA
-options.ga_options = optimoptions("ga","ConstraintTolerance", 1e-6,"PopulationSize", 150, "MaxGenerations", 30, "FunctionTolerance", 1e-6, "Display", "off", 'PlotFcn', {@gaplotbestf,@gaplotstopping});
+options.ga_options = optimoptions("ga","ConstraintTolerance", 1e-6,"PopulationSize", 150, "MaxGenerations", 30, "FunctionTolerance", 1e-6, "Display", "off"); %'PlotFcn' {@gaplotbestf,@gaplotstopping});
 % options for fmincon
 options.fmincon_options = optimoptions("fmincon", "Display", "off");
 % options for fsolve

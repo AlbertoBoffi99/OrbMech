@@ -110,7 +110,9 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
         out.vp_m = vp_m;
     else
         out.Dv_disc = DvT1 + DvT2 + Dvfb;
+        out.dates_disc = dates;
         out.nanflag = 1;
+        out.rp_norm = rp_norm;
         %warning("Perigee radius is below Earth's atmosphere")
     end
 
