@@ -53,14 +53,16 @@ tspan_t2 = linspace( 0, T2, 1000 );
 [~, state_t2] = ode113( @(t,s) tbp_ode(t, s, astro.muS), tspan_t2, [rfbE, results.ViT2'], options.ode_options);
 
 figure()  
-plot3( stateJ(:,1), stateJ(:,2), stateJ(:,3), 'red', 'linewidth', 2)        
+background('Milky Way');
 hold on
-plot3( state_t1(:,1), state_t1(:,2), state_t1(:,3), 'green--', 'linewidth', 1)
-plot3( stateE(:,1), stateE(:,2), stateE(:,3), 'blue', 'linewidth', 2)     
-plot3( state_t2(:,1), state_t2(:,2), state_t2(:,3), 'magenta--', 'linewidth', 1) 
-plot3( stateV(:,1), stateV(:,2), stateV(:,3), 'yellow', 'linewidth', 2)     
+plot3( stateJ(:,1), stateJ(:,2), stateJ(:,3), 'red:', 'linewidth', 1.5)        
+plot3( state_t1(:,1), state_t1(:,2), state_t1(:,3), 'green', 'linewidth', 1)
+plot3( stateE(:,1), stateE(:,2), stateE(:,3), 'blue:', 'linewidth', 1.5)     
+plot3( state_t2(:,1), state_t2(:,2), state_t2(:,3), 'magenta', 'linewidth', 1) 
+plot3( stateV(:,1), stateV(:,2), stateV(:,3), 'yellow:', 'linewidth', 1.5)     
 % add Planets at corresponding positions
 opts.units= 's';
+
 planet3D('Sun', opts, [0 0 0]);  
 opts.units= 'j';
 planet3D( 'Jupiter', opts, rdJ);
@@ -77,17 +79,17 @@ planet3D( 'Venus', opts, rfbV);
 planet3D( 'Venus', opts, raV);
 
 legend('Jupiter orbit','Transfer arc 1', 'Earth orbit','Transfer arc 2','Venus orbit', 'Sun');
-text(rdJ(1),rdJ(2)+1e7,rdJ(3), '\bf J_{dep}');
-text(rfbJ(1),rfbJ(2)+1e7,rfbJ(3), '\bf J_{fb}');
-text(raJ(1),raJ(2)+1e7,raJ(3), '\bf J_{arr}');
+text(rdJ(1),rdJ(2)+3e7,rdJ(3), '\bf J_{dep}', 'color','w','FontSize',14 );
+text(rfbJ(1),rfbJ(2)+3e7,rfbJ(3), '\bf J_{fb}', 'color','w','FontSize',14 );
+text(raJ(1),raJ(2)+3e7,raJ(3), '\bf J_{arr}', 'color','w','FontSize',14 );
 
-text(rdE(1),rdE(2)+1e7,rdE(3), '\bf E_{dep}');
-text(rfbE(1),rfbE(2)+1e7,rfbE(3), '\bf E_{fb}');
-text(raE(1),raE(2)+1e7,raE(3), '\bf E_{arr}');
+text(rdE(1),rdE(2)+1e7,rdE(3), '\bf E_{dep}', 'color','w','FontSize',14 );
+text(rfbE(1),rfbE(2)+1e7,rfbE(3), '\bf E_{fb}', 'color','w','FontSize',14 );
+text(raE(1),raE(2)+1e7,raE(3), '\bf E_{arr}', 'color','w','FontSize',14 );
 
-text(rdV(1),rdV(2)+1e7,rdV(3), '\bf V_{dep}');
-text(rfbV(1),rfbV(2)+1e7,rfbV(3), '\bf V_{fb}');
-text(raV(1),raV(2)+1e7,raV(3), '\bf V_{arr}');
+text(rdV(1),rdV(2)+2e7,rdV(3), '\bf V_{dep}', 'color','w','FontSize',14 );
+text(rfbV(1),rfbV(2)+2e7,rfbV(3), '\bf V_{fb}', 'color','w','FontSize',14 );
+text(raV(1),raV(2)+2e7,raV(3), '\bf V_{arr}', 'color','w','FontSize',14 );
 
 xlabel("r_x[km]");
 ylabel("r_y[km]");
@@ -279,20 +281,17 @@ end
 %time spent inside the Earth's SOI
 fb_time = time1 + time2;
 
-tspanH = linspace( 0, 5000, 1000 );
-[timeH1, stateH1] = ode113( @(t,s) tbp_ode(t, s, astro.muE), tspanH, [results.rp, results.vp_p], options.ode_options);
-[timeH2, stateH2] = ode113( @(t,s) tbp_ode(t, s, astro.muE), -tspanH, [results.rp, results.vp_m], options.ode_options);
-
 figure()  
-p1 = plot3( stateH1(:,1), stateH1(:,2), stateH1(:,3), 'red', 'linewidth', 2);   %outgoing hyperbola  
+background('Milky Way');
 hold on
-p2 = plot3( stateH2(:,1), stateH2(:,2), stateH2(:,3), 'blue', 'linewidth', 2);  %incoming hyperbola
+p1 = plot3( stateH1(1:50,1), stateH1(1:50,2), stateH1(1:50,3), 'red', 'linewidth', 2);   %outgoing hyperbola  
+p2 = plot3( stateH2(1:50,1), stateH2(1:50,2), stateH2(1:50,3), 'blue', 'linewidth', 2);  %incoming hyperbola
 opts.units = 'km';
 planet3D('Earth',opts, [0 0 0]);    %add planet
 grid on
 axis equal
 % add arrow in the direction of the planet's velocity 
-p3 = arrow3d([0 vfbE(1)*10^3],[0 vfbE(2)*10^3],[0 vfbE(3)*10^3],9/10,0.2*10^3,0.8*10^3,'black'); 
+p3 = arrow3d([0 vfbE(1)*10^3],[0 vfbE(2)*10^3],[0 vfbE(3)*10^3],9/10,0.2*10^3,0.8*10^3,'w'); 
 % showing the perigee passage
 p4 = scatter3(stateH1(1,1), stateH1(1,2),stateH1(1,3), 'magenta' ,'filled', 'LineWidth', 10);
 
