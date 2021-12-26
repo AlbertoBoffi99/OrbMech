@@ -5,9 +5,8 @@
 
 %% STRUCUTRES DECLARATION
 
-global results out
 % intila minimum delta velocity
-results.Dv_min = astroConstants(5);
+results.Dv = astroConstants(5);
 % initial dates (just not to have NaN as first date)
 results.dates = [1e6 1e6 1e6];
 
@@ -94,6 +93,8 @@ options.ode_options = odeset ('RelTol', 1e-3, 'AbsTol', 1e-3);
 options.orbitType = 0;
 options.Nrev = 0;
 options.Ncase = 0;
-options.LambOptions = 1;
+options.LambOptions = 0;
 % plotting options
 options.plot = 1;
+% saving options
+options.save = 1;

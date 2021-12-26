@@ -23,7 +23,7 @@ global out
 % run configuration file, containing all numerical data
 run config.m
 
-%%  MESH OPTIMIZATION
+%%  OPTIMIZATION
 
 % declare flyby modelling function as handle
 JEV = @(dates) JEV_lamb_fb_lamb(dates, astro, options);
@@ -35,7 +35,7 @@ optim.nonlincon = @(x) rp_nonlinFcn(x, astro.RE, astro.h_atm);
 departure.window = linspace(departure.date_min, departure.date_max, optim.nmesh_dep);
 
 % open waitbar
-temp.wb = waitbar(0, 'Pattern Optimization Running ...');
+temp.wb = waitbar(0, 'Optimization Running ...');
 
 % for every departure date inside the departure window
 for j = 1:1:size(departure.window,2);
@@ -80,16 +80,18 @@ for j = 1:1:size(departure.window,2);
             
             % if the delta velocity found is the minimum until now, save it
             % as the best result
-            if temp.Dv < results.Dv_min && ~out.nanflag
+            if temp.Dv < results.Dv && ~out.nanflag
                 results.dates = temp.dates;
-                results.Dv_min = temp.Dv;
+                results.Dv = temp.Dv;
                 results.ViT1 = out.ViT1;
                 results.ViT2 = out.ViT2;
                 results.DvT1 = out.DvT1;
                 results.DvT2 = out.DvT2;
+                results.DvGA = out.DvGA;
                 results.Dvfb = out.Dvfb;
-                results.rp_norm = out.rp_norm;
                 results.rp = out.rp;
+                results.rp_norm = out.rp_norm;
+                results.hp = results.rp_norm - astro.RE;
                 results.vp_p = out.vp_p;
                 results.vp_m = out.vp_m;
             end
@@ -99,10 +101,8 @@ end
 
 % close waitbar
 delete(temp.wb)
-% clear workspace
-clear j k z temp
 
-fprintf('\nOptimization with discretization mesh conlcuded\n')
+fprintf('\n     Optimization with discretization mesh conlcuded\n')
 
 % clock stopped
 fprintf('\nExecution concluded\n')
@@ -113,7 +113,7 @@ toc
 % if the user asks for plotting 
 if options.plot
 
-    fprintf('\n\nPlotting started\n')
+    fprintf('\nPlotting started ...\n')
 
     % plotting function
     run plotting.m
@@ -121,5 +121,39 @@ if options.plot
     fprintf('Plotting concluded\n')
 
 end
+
+%% DATA RECORD
+
+% convert dates into normal date format from mjd2000
+results.dates(1,1:6) = mjd20002date(results.dates(1));
+results.dates(2,:) = mjd20002date(results.dates(2));
+results.dates(3,:) = mjd20002date(results.dates(3));
+
+fprintf('\nDATA RECORD:\n')
+
+fprintf('     departure date: %g/%g/%g [mm/dd/yyyy] \n', results.dates(1,2), results.dates(1,3), results.dates(1,1));
+fprintf('     fly-by date: %g/%g/%g [mm/dd/yyyy] \n', results.dates(2,2), results.dates(2,3), results.dates(2,1));
+fprintf('     arrival date: %g/%g/%g [mm/dd/yyyy] \n\n', results.dates(3,2), results.dates(3,3), results.dates(3,1));
+
+fprintf('     total delta velocity needed: %g [km/s] \n', results.Dv);
+fprintf('     delta velocity to begin interplanetary trajectory: %g [km/s] \n', results.DvT1);
+fprintf('     natural fly-by delta velocity: %g [km/s] \n', results.Dvfb);
+fprintf('     powered fly-by delta velocity gven at the perigee: %g [km/s] \n', results.DvGA);
+fprintf('     delta velocity to end interplanetary trajectory: %g [km/s] \n\n', results.DvT2);
+
+fprintf('     height of the perigee of the fly-by trajectory: %g [km] \n', results.hp);
+fprintf("     time spent inside Earth's SOI: %g [s] \n", results.Dtfb);
+
+%% SAVE RESULTS
+
+% if the user asks for saving results 
+if options.save
+
+    save('.\Results\meshwfmincon_results.mat', 'results');
+
+end
+
+% clear workspace
+clearvars -except optim astro options results
 
 

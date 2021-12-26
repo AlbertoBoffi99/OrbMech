@@ -1,4 +1,4 @@
-function [rp_norm, rp, DvGA, Dvfb, vp_p, vp_m] = GAflyby(V_min, V_plus, v_pl, mu_pl, R_pl, h_atm_pl, options)
+function [rp_norm, rp, DvGA, Dvfb vp_p, vp_m] = GAflyby(V_min, V_plus, v_pl, mu_pl, R_pl, h_atm_pl, options)
 % GAflyby Assisted flyby computation
 % 
 % Function to compute the assisted flyby around a planet
@@ -39,7 +39,7 @@ function [rp_norm, rp, DvGA, Dvfb, vp_p, vp_m] = GAflyby(V_min, V_plus, v_pl, mu
     v_plus = [V_plus(1)-v_pl(1) V_plus(2)-v_pl(2) V_plus(3)-v_pl(3)];
 
     % natural fly-by delta velocity
-    Dvfb = norm(v_plus - v_min);
+    Dvfb = norm(v_)
 
     % turning angle
     TA = acos(dot(v_min,v_plus)/(norm(v_min)*norm(v_plus)));
