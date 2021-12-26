@@ -125,9 +125,10 @@ end
 %% DATA RECORD
 
 % convert dates into normal date format from mjd2000
-results.dates(1,1:6) = mjd20002date(results.dates(1));
-results.dates(2,:) = mjd20002date(results.dates(2));
-results.dates(3,:) = mjd20002date(results.dates(3));
+temp.dates = results.dates;
+results.dates(1,1:6) = mjd20002date(temp.dates(1));
+results.dates(2,:) = mjd20002date(temp.dates(2));
+results.dates(3,:) = mjd20002date(temp.dates(3));
 
 fprintf('\nDATA RECORD:\n')
 
@@ -142,7 +143,7 @@ fprintf('     powered fly-by delta velocity gven at the perigee: %g [km/s] \n', 
 fprintf('     delta velocity to end interplanetary trajectory: %g [km/s] \n\n', results.DvT2);
 
 fprintf('     height of the perigee of the fly-by trajectory: %g [km] \n', results.hp);
-fprintf("     time spent inside Earth's SOI: %g [s] \n", results.Dtfb);
+fprintf("     time spent inside Earth's SOI: %g [s] \n\n", results.Dtfb);
 
 %% SAVE RESULTS
 
@@ -150,6 +151,7 @@ fprintf("     time spent inside Earth's SOI: %g [s] \n", results.Dtfb);
 if options.save
 
     save('.\Results\meshwfmincon_results.mat', 'results');
+    fprintf('Results saved\n');
 
 end
 
