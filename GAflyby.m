@@ -24,7 +24,7 @@ function [rp_norm, rp, DvGA, Dvfb, vp_p, vp_m] = GAflyby(V_min, V_plus, v_pl, mu
 %     vp_m[3x1]         perigee velocity vector on entry hyperbola 
 %
 % CONTRIBUTORS
-%     Alberto Boffi, ...
+%     Alberto Boffi, Enrico Raviola, Andrea Campagna, Luca Ciavirella
 % 
 % VERSION
 %     16-12-2021: v01.0

@@ -19,7 +19,7 @@ function [c, ceq] = rp_nonlinFcn(x, RE, h_atm)
 %     ceq [fx1]         array of nonlinear equality constraints at x
 %
 % CONTRIBUTORS
-%     Alberto Boffi, ...
+%     Alberto Boffi, Enrico Raviola, Andrea Campagna, Luca Ciavirella
 % 
 % VERSION
 %     26-12-2021: v01.0
@@ -34,6 +34,7 @@ function [c, ceq] = rp_nonlinFcn(x, RE, h_atm)
 
     % perigee radius has to be greater than Earth's radius + atmosphere's
     % height
+
     if out.rp_norm < RE + h_atm
         % if this is not true the constraint value is as high as the
         % difference between the perigee radius and the minimum radius to
@@ -46,6 +47,6 @@ function [c, ceq] = rp_nonlinFcn(x, RE, h_atm)
      %% EQUALITY CONSTRAINTS
     
      % no non-linear inequality constraint is set
-     ceq = 0;
+     ceq = [];
 
 end

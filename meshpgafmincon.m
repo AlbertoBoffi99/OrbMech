@@ -3,12 +3,9 @@
 %   on Venus through a fly-by around the Earth
 
 % TO DO
-% - see if plotting.m is optimized in terms of variables and datas
-% - change plotting.m variables names
-% - change all plots to latex interpreter
-% - plot with all planets at departure, flyby, arrival
-% - add ga and fmincon plot
 % - bring Dtfb calculation outside plotting.m
+% - add scatter to pork chop legend
+% - set ythicklabel to latex
 
 %-------------------------------------------------------------------------%
 
@@ -28,6 +25,9 @@ fprintf('Execution started ...\n');
 % calling global functions
 global out
 
+% optimization method variable
+options.method = 1;
+
 % run configuration file, containing all numerical data
 run config.m
 
@@ -37,7 +37,7 @@ run config.m
 JEV = @(dates) JEV_lamb_fb_lamb(dates, astro, options);
 
 % discretize departure window
-departure.window = linspace(departure.date_min, departure.date_max, optim.nmesh_dep);
+departure.window = linspace(departure.date_min, arrival.date_max, optim.nmesh_dep);
 
 % open waitbar
 temp.wb = waitbar(0, 'Pattern Optimization Running ...');
@@ -59,7 +59,7 @@ for j = 1:1:size(departure.window,2);
         % define the arrival window according to ToF retreived from 2nd arc's pork
         % chop plot
         arrival.window = linspace(fly.window(k) + arrival.tof_min, ...
-            fly.window(k) + arrival.tof_max, optim.nmesh_arr);
+            min(fly.window(k) + arrival.tof_max, arrival.date_max), optim.nmesh_arr);
 
         % for every arrival date insisde the arrival window
         for z = 1:1:size(arrival.window,2);
@@ -99,11 +99,11 @@ fprintf('\n     Optimization with discretization mesh conlcuded\n')
 
 % initialize perigee radius inside global structure out.
 out.rp_norm = results.rp_norm;
-% non linear function for GA and fmincon
-optim.nonlincon = @(x) rp_nonlinFcn(x, astro.RE, astro.h_atm);
 
 % open waitbar
 temp.wb = waitbar(0, 'GA and fmincon optimization Running ...');
+
+temp.dates = results.dates;
 
 % run optimization process several times to verify consistency of GA and
 % fmincon
@@ -114,24 +114,34 @@ for i = 1:1:optim.noptim
     
     % B constraint matrix for GA and fmincon
     optim.Bcon = [ - results.dates(1) + departure.SW; ...
-        - results.dates(2) + fly.SW; ...
-        - results.dates(3) + arrival.SW; ...
-        results.dates(1) + departure.SW; ...
-        results.dates(2) + fly.SW; ...
-        results.dates(3) + arrival.SW ];
+                   - results.dates(2) + fly.SW; ...
+                   - results.dates(3) + arrival.SW; ...
+                     results.dates(1) + departure.SW; ...
+                     results.dates(2) + fly.SW; ...
+                     results.dates(3) + arrival.SW; ...
+                    - departure.date_min; ...
+                    arrival.date_max;
+                    0;
+                    0];
     
     % optimization of Dv using GA
-    [temp.dates, temp.Dv] = ...
+    [temp.dates, temp.Dv, temp.GA_exitflag] = ...
         ga(JEV, optim.ga_nvars, optim.Acon, optim.Bcon, ...
-        [], [], [], [], optim.nonlincon, [], options.ga_options);
+        [], [], [], [], [], [], options.ga_options);
+    
+    % save GA result in a vector
+    results.ga_Dv(i) = temp.Dv;
     
     % update fmincon guess according to ga result
     fmincon_guess = temp.dates;
     
     % optimization of Dv using fmincon
-    [temp.dates, temp.Dv] = ...
+    [temp.dates, temp.Dv, temp.fmincon_exitflag] = ...
         fmincon(JEV, fmincon_guess, optim.Acon, optim.Bcon, ...
-        [], [], [], [], optim.nonlincon, options.fmincon_options);
+        [], [], [], [], [], options.fmincon_options);
+
+    % save fmincon result in a vector
+    results.fmincon_Dv(i) = temp.Dv;
     
     % if the delta velocity found is the minimum until now, save it
     % as the best result
@@ -212,5 +222,5 @@ if options.save
 end
 
 % clear workspace
-clearvars -except optim astro options results
+clearvars -except optim astro options results departure arrival fly
 

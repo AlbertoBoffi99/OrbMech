@@ -20,6 +20,9 @@ fprintf('Execution started ...\n');
 % calling global functions
 global out
 
+% optimization method variable
+options.method = 2;
+
 % run configuration file, containing all numerical data
 run config.m
 
@@ -28,11 +31,8 @@ run config.m
 % declare flyby modelling function as handle
 JEV = @(dates) JEV_lamb_fb_lamb(dates, astro, options);
 
-% non linear function for GA and fmincon
-optim.nonlincon = @(x) rp_nonlinFcn(x, astro.RE, astro.h_atm);
-
 % discretize departure window
-departure.window = linspace(departure.date_min, departure.date_max, optim.nmesh_dep);
+departure.window = linspace(departure.date_min, arrival.date_max, optim.nmesh_dep);
 
 % open waitbar
 temp.wb = waitbar(0, 'Optimization Running ...');
@@ -45,38 +45,42 @@ for j = 1:1:size(departure.window,2);
     fly.window = linspace(departure.window(j) + departure.tof_min, ...
         departure.window(j) + departure.tof_max, optim.nmesh_fly);
     
-    % update waitbar
+    % updating waitbar
     waitbar(j/size(departure.window,2), temp.wb);
-    
+
     % for every flyby date inside the flyby window
     for k = 1:1:size(fly.window,2);
-        
+    
         % define the arrival window according to ToF retreived from 2nd arc's pork
         % chop plot
         arrival.window = linspace(fly.window(k) + arrival.tof_min, ...
-            fly.window(k) + arrival.tof_max, optim.nmesh_arr);
-        
+            min(fly.window(k) + arrival.tof_max, arrival.date_max), optim.nmesh_arr);
+
         % for every arrival date insisde the arrival window
         for z = 1:1:size(arrival.window,2);
             
             % departure, flyby, arrival dates vector
             temp.dates = [departure.window(j), fly.window(k), arrival.window(z)];
 
-            % B constraint matrix for GA and fmincon
-            optim.Bcon = [ - temp.dates(1) + departure.SW; ...
-            - temp.dates(2) + fly.SW; ...
-            - temp.dates(3) + arrival.SW; ...
-            temp.dates(1) + departure.SW; ...
-            temp.dates(2) + fly.SW; ...
-            temp.dates(3) + arrival.SW ];
-
-            % update fmincon guess according to ga result
-            fmincon_guess = temp.dates;
+           % B constraint matrix for GA and fmincon
+            optim.Bcon = [ - results.dates(1) + departure.SW; ...
+                   - results.dates(2) + fly.SW; ...
+                   - results.dates(3) + arrival.SW; ...
+                     results.dates(1) + departure.SW; ...
+                     results.dates(2) + fly.SW; ...
+                     results.dates(3) + arrival.SW; ...
+                    - departure.date_min; ...
+                    arrival.date_max;
+                    0;
+                    0];
     
             % optimization of Dv using fmincon
-            [temp.dates, temp.Dv] = ...
-            fmincon(JEV, fmincon_guess, optim.Acon, optim.Bcon, ...
-            [], [], [], [], optim.nonlincon, options.fmincon_options);
+            [temp.dates, temp.Dv, temp.exitflag] = ...
+            fmincon(JEV, temp.dates, optim.Acon, optim.Bcon, ...
+            [], [], [], [], [], options.fmincon_options);
+
+            temp.Dv
+            temp.exitflag
             
             % if the delta velocity found is the minimum until now, save it
             % as the best result
@@ -156,6 +160,6 @@ if options.save
 end
 
 % clear workspace
-clearvars -except optim astro options results
+clearvars -except optim astro options results departure arrival fly
 
 

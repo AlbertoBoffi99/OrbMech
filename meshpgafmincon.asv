@@ -3,10 +3,9 @@
 %   on Venus through a fly-by around the Earth
 
 % TO DO
-% - see if plotting.m is optimized in terms of variables and datas
-% - change plotting.m variables names
-% - change all plots to latex interpreter
-% - plot with all planets at departure, flyby, arrival
+% - bring Dtfb calculation outside plotting.m
+% - add scatter to pork chop legend
+% - set ythicklabel to latex
 
 %-------------------------------------------------------------------------%
 
@@ -25,6 +24,9 @@ fprintf('Execution started ...\n');
 
 % calling global functions
 global out
+
+% optimization method variable
+options.method = 1;
 
 % run configuration file, containing all numerical data
 run config.m
@@ -45,8 +47,8 @@ for j = 1:1:size(departure.window,2);
     
     % define the flyby window according to ToF retreived from 1st arc's pork
     % chop plot
-    fly.window = linspace(departure.window(j) + departure.tof_min, ...
-        departure.window(j) + departure.tof_max, optim.nmesh_fly);
+    fly.window = linspace(max(departure.window(j) + departure.tof_min, fly.date_min), ...
+        min(departure.window(j) + departure.tof_max, fly.date_max), optim.nmesh_fly);
     
     % updating waitbar
     waitbar(j/size(departure.window,2), temp.wb);
@@ -56,8 +58,8 @@ for j = 1:1:size(departure.window,2);
     
         % define the arrival window according to ToF retreived from 2nd arc's pork
         % chop plot
-        arrival.window = linspace(fly.window(k) + arrival.tof_min, ...
-            fly.window(k) + arrival.tof_max, optim.nmesh_arr);
+        arrival.window = linspace(max(fly.window(k) + arrival.tof_min, arrival.date_min), ...
+            min(fly.window(k) + arrival.tof_max, arrival.date_max), optim.nmesh_arr);
 
         % for every arrival date insisde the arrival window
         for z = 1:1:size(arrival.window,2);
@@ -97,6 +99,7 @@ fprintf('\n     Optimization with discretization mesh conlcuded\n')
 
 % initialize perigee radius inside global structure out.
 out.rp_norm = results.rp_norm;
+
 % non linear function for GA and fmincon
 optim.nonlincon = @(x) rp_nonlinFcn(x, astro.RE, astro.h_atm);
 
@@ -112,24 +115,36 @@ for i = 1:1:optim.noptim
     
     % B constraint matrix for GA and fmincon
     optim.Bcon = [ - results.dates(1) + departure.SW; ...
-        - results.dates(2) + fly.SW; ...
-        - results.dates(3) + arrival.SW; ...
-        results.dates(1) + departure.SW; ...
-        results.dates(2) + fly.SW; ...
-        results.dates(3) + arrival.SW ];
+                   - results.dates(2) + fly.SW; ...
+                   - results.dates(3) + arrival.SW; ...
+                     results.dates(1) + departure.SW; ...
+                     results.dates(2) + fly.SW; ...
+                     results.dates(3) + arrival.SW; ...
+                    - departure.date_min; ...
+                    - fly.date_min; ...
+                    - arrival.date_min; ...
+                    departure.date_max; ...
+                    fly.date_max; ...
+                    arrival.date_max;];
     
     % optimization of Dv using GA
-    [temp.dates, temp.Dv] = ...
+    [temp.dates, temp.Dv, temp.GA_exitflag] = ...
         ga(JEV, optim.ga_nvars, optim.Acon, optim.Bcon, ...
         [], [], [], [], optim.nonlincon, [], options.ga_options);
+    
+    % save GA result in a vector
+    results.ga_Dv(i) = temp.Dv;
     
     % update fmincon guess according to ga result
     fmincon_guess = temp.dates;
     
     % optimization of Dv using fmincon
-    [temp.dates, temp.Dv] = ...
+    [temp.dates, temp.Dv, temp.fmincon_exitflag] = ...
         fmincon(JEV, fmincon_guess, optim.Acon, optim.Bcon, ...
         [], [], [], [], optim.nonlincon, options.fmincon_options);
+
+    % save fmincon result in a vector
+    results.fmincon_Dv(i) = temp.Dv;
     
     % if the delta velocity found is the minimum until now, save it
     % as the best result
@@ -141,7 +156,7 @@ for i = 1:1:optim.noptim
         results.DvT1 = out.DvT1;
         results.DvT2 = out.DvT2;
         results.DvGA = out.DvGA;
-        results.Dvfb = out.Dfb;
+        results.Dvfb = out.Dvfb;
         results.rp = out.rp;
         results.rp_norm = out.rp_norm;
         results.hp = results.rp_norm - astro.RE;
@@ -162,27 +177,6 @@ delete(temp.wb)
 fprintf('\nExecution concluded\n')
 toc
 
-%% DATA RECORD
-
-disp(' ')
-disp('\nDATA RECORD:')
-
-fprintf('departure date: %g [mm/dd/yyyy] \n', mjd20002date(results.dates(1)));
-fprintf('fly-by date: %g [mm/dd/yyyy] \n', mjd20002date(results.dates(2)));
-fprintf('arrival date: %g [mm/dd/yyyy] \n', mjd20002date(results.dates(3)));
-
-fprintf('delta velocity to begin interplanetary trajectory: %g [km/s] \n', results.DvT1);
-fprintf('natural fly-by delta velocity: %g [km/s] \n', results.Dvfb);
-fprintf('powered fly-by delta velocity gven at the perigee: %g [km/s] \n', results.DvGA);
-fprintf('delta velocity to end interplanetary trajectory: %g [km/s] \n', results.DvT2);
-
-fprintf('height of the perigee of the fly-by trajectory: %g [km/s] \n', results.hp);
-fprintf("time spent inside Earth's SOI: %g [km/s] \n", results.Dtfb);
-
-%% SAVE RESULTS
-
-save('meshpgafmincon_results.mat', 'results');
-
 %% PLOTTING
 
 % if the user asks for plotting 
@@ -197,7 +191,39 @@ if options.plot
 
 end
 
-% clear workspace
-clearvars -except optim astro options results
+%% DATA RECORD
 
+% convert dates into normal date format from mjd2000
+temp.dates = results.dates;
+results.dates(1,1:6) = mjd20002date(temp.dates(1));
+results.dates(2,:) = mjd20002date(temp.dates(2));
+results.dates(3,:) = mjd20002date(temp.dates(3));
+
+fprintf('\nDATA RECORD:\n')
+
+fprintf('     departure date: %g/%g/%g [mm/dd/yyyy] \n', results.dates(1,2), results.dates(1,3), results.dates(1,1));
+fprintf('     fly-by date: %g/%g/%g [mm/dd/yyyy] \n', results.dates(2,2), results.dates(2,3), results.dates(2,1));
+fprintf('     arrival date: %g/%g/%g [mm/dd/yyyy] \n\n', results.dates(3,2), results.dates(3,3), results.dates(3,1));
+
+fprintf('     total delta velocity needed: %g [km/s] \n', results.Dv);
+fprintf('     delta velocity to begin interplanetary trajectory: %g [km/s] \n', results.DvT1);
+fprintf('     natural fly-by delta velocity: %g [km/s] \n', results.Dvfb);
+fprintf('     powered fly-by delta velocity gven at the perigee: %g [km/s] \n', results.DvGA);
+fprintf('     delta velocity to end interplanetary trajectory: %g [km/s] \n\n', results.DvT2);
+
+fprintf('     height of the perigee of the fly-by trajectory: %g [km] \n', results.hp);
+fprintf("     time spent inside Earth's SOI: %g [s] \n\n", results.Dtfb);
+
+%% SAVE RESULTS
+
+% if the user asks for saving results 
+if options.save
+
+    save('.\Results\meshpgafmincon_results.mat', 'results');
+    fprintf('Results saved\n');
+
+end
+
+% clear workspace
+clearvars -except optim astro options results departure arrival fly
 

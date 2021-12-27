@@ -20,7 +20,7 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
 %     Dv_tot [3x1]      total delta velocity vector
 %
 % CONTRIBUTORS
-%     Alberto Boffi, ...
+%     Alberto Boffi, Enrico Raviola, Andrea Campagna, Luca Ciavirella
 % 
 % VERSION
 %     16-12-2021: v01.0
@@ -118,6 +118,7 @@ function [Dv_tot] = JEV_lamb_fb_lamb(dates, astro, options)
         out.dates_disc = dates;
         out.nanflag = 1;
         out.rp_norm = rp_norm;
+        Dv_tot = 1e4;
         % warning("Perigee radius is below Earth's atmosphere")
     end
 
