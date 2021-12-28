@@ -47,6 +47,6 @@ function [c, ceq] = rp_nonlinFcn(x, RE, h_atm)
      %% EQUALITY CONSTRAINTS
     
      % no non-linear inequality constraint is set
-     ceq = [];
+     ceq = [];    
 
 end
