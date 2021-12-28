@@ -141,10 +141,10 @@ fprintf("     time spent inside Earth's SOI: %g [s] \n\n", results.Dtfb);
 if options.save
 
     save('.\Results\meshwga_results.mat', 'results');
-    savefig(flyby, '.\Figures\meshwga\flyby.fig');
-    savefig(pcpL1, '.\Figures\meshwga\pcpL1.fig');
-    savefig(pcpL2, '.\Figures\meshwga\pcpL2.fig');
-    savefig(interplanetary, '.\Figures\meshwga\interplanetary.fig');
+%     savefig(flyby, '.\Figures\meshwga\flyby.fig');
+%     savefig(pcpL1, '.\Figures\meshwga\pcpL1.fig');
+%     savefig(pcpL2, '.\Figures\meshwga\pcpL2.fig');
+%     savefig(interplanetary, '.\Figures\meshwga\interplanetary.fig');
     fprintf('Results and figure saved\n');
 
 end

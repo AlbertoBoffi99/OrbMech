@@ -220,11 +220,11 @@ fprintf("     time spent inside Earth's SOI: %g [s] \n\n", results.Dtfb);
 if options.save
 
     save('.\Results\meshpgafmincon_results.mat', 'results');
-    savefig(flyby, '.\Figures\meshpgafmincon\flyby.fig');
-    savefig(pcpL1, '.\Figures\meshpgafmincon\pcpL1.fig');
-    savefig(pcpL2, '.\Figures\meshpgafmincon\pcpL2.fig');
-    savefig(interplanetary, '.\Figures\meshpgafmincon\interplanetary.fig');
-    savefig(minimization, '.\Figures\meshpgafmincon\minimization.fig');
+%     savefig(flyby, '.\Figures\meshpgafmincon\flyby.fig');
+%     savefig(pcpL1, '.\Figures\meshpgafmincon\pcpL1.fig');
+%     savefig(pcpL2, '.\Figures\meshpgafmincon\pcpL2.fig');
+%     savefig(interplanetary, '.\Figures\meshpgafmincon\interplanetary.fig');
+%     savefig(minimization, '.\Figures\meshpgafmincon\minimization.fig');
     fprintf('Results and figure saved\n');
 
 end
