@@ -38,68 +38,48 @@ departure.window = linspace(departure.date_min, arrival.date_max, optim.nmesh_de
 temp.wb = waitbar(0, 'Optimization Running ...');
 
 % for every departure date inside the departure window
-for j = 1:1:size(departure.window,2);
-    
-    % define the flyby window according to ToF retreived from 1st arc's pork
-    % chop plot
-    fly.window = linspace(departure.window(j) + departure.tof_min, ...
-        departure.window(j) + departure.tof_max, optim.nmesh_fly);
+for j = 1:1:size(departure.window,2)-2;
     
     % updating waitbar
     waitbar(j/size(departure.window,2), temp.wb);
 
-    % for every flyby date inside the flyby window
-    for k = 1:1:size(fly.window,2);
+   % B constraint matrix for GA and fmincon
+    optim.Bcon = [ - departure.window(j); ...
+           - departure.window(j) - departure.tof_min; ...
+           - departure.window(j) - departure.tof_min - arrival.tof_min; ...
+                    departure.window(j+1); ...
+             departure.window(j+1) + departure.tof_max; ...
+             departure.window(j+1) + departure.tof_max + arrival.tof_max; ...
+            - departure.date_min; ...
+            arrival.date_max;
+            optim.tof_minimum;
+            optim.tof_minimum];
+
+    % optimization of Dv using fmincon
+    [temp.dates, temp.Dv, temp.exitflag] = ...
+    ga(JEV, optim.ga_nvars, optim.Acon, optim.Bcon, ...
+    [], [], [], [], [], options.ga_options);
+
+    results.ga_Dv(j) = temp.Dv;
+    results.ga_dates(j, 1:3) = temp.dates;
+    results.ga_exitflag(j) = temp.exitflag;
     
-        % define the arrival window according to ToF retreived from 2nd arc's pork
-        % chop plot
-        arrival.window = linspace(fly.window(k) + arrival.tof_min, ...
-            min(fly.window(k) + arrival.tof_max, arrival.date_max), optim.nmesh_arr);
-
-        % for every arrival date insisde the arrival window
-        for z = 1:1:size(arrival.window,2);
-            
-            % departure, flyby, arrival dates vector
-            temp.dates = [departure.window(j), fly.window(k), arrival.window(z)];
-
-           % B constraint matrix for GA and fmincon
-            optim.Bcon = [ - results.dates(1) + departure.SW; ...
-                   - results.dates(2) + fly.SW; ...
-                   - results.dates(3) + arrival.SW; ...
-                     results.dates(1) + departure.SW; ...
-                     results.dates(2) + fly.SW; ...
-                     results.dates(3) + arrival.SW; ...
-                    - departure.date_min; ...
-                    arrival.date_max;
-                    0;
-                    0];
-    
-            % optimization of Dv using fmincon
-            [temp.dates, temp.Dv, temp.exitflag] = ...
-            fmincon(JEV, temp.dates, optim.Acon, optim.Bcon, ...
-            [], [], [], [], [], options.fmincon_options);
-
-            temp.Dv
-            temp.exitflag
-            
-            % if the delta velocity found is the minimum until now, save it
-            % as the best result
-            if temp.Dv < results.Dv && ~out.nanflag
-                results.dates = temp.dates;
-                results.Dv = temp.Dv;
-                results.ViT1 = out.ViT1;
-                results.ViT2 = out.ViT2;
-                results.DvT1 = out.DvT1;
-                results.DvT2 = out.DvT2;
-                results.DvGA = out.DvGA;
-                results.Dvfb = out.Dvfb;
-                results.rp = out.rp;
-                results.rp_norm = out.rp_norm;
-                results.hp = results.rp_norm - astro.RE;
-                results.vp_p = out.vp_p;
-                results.vp_m = out.vp_m;
-            end
-        end
+    % if the delta velocity found is the minimum until now, save it
+    % as the best result
+    if temp.Dv < results.Dv && ~out.nanflag
+        results.dates = temp.dates;
+        results.Dv = temp.Dv;
+        results.ViT1 = out.ViT1;
+        results.ViT2 = out.ViT2;
+        results.DvT1 = out.DvT1;
+        results.DvT2 = out.DvT2;
+        results.DvGA = out.DvGA;
+        results.Dvfb = out.Dvfb;
+        results.rp = out.rp;
+        results.rp_norm = out.rp_norm;
+        results.hp = results.rp_norm - astro.RE;
+        results.vp_p = out.vp_p;
+        results.vp_m = out.vp_m;
     end
 end
 
@@ -107,6 +87,12 @@ end
 delete(temp.wb)
 
 fprintf('\n     Optimization with discretization mesh conlcuded\n')
+
+%% TIME SPENT DURING FLYBY
+
+run fbtime.m
+
+%-------------------------------------------------------------------------%
 
 % clock stopped
 fprintf('\nExecution concluded\n')
@@ -154,8 +140,12 @@ fprintf("     time spent inside Earth's SOI: %g [s] \n\n", results.Dtfb);
 % if the user asks for saving results 
 if options.save
 
-    save('.\Results\meshwfmincon_results.mat', 'results');
-    fprintf('Results saved\n');
+    save('.\Results\meshwga_results.mat', 'results');
+    savefig(flyby, '.\Figures\meshwga\flyby.fig');
+    savefig(pcpL1, '.\Figures\meshwga\pcpL1.fig');
+    savefig(pcpL2, '.\Figures\meshwga\pcpL2.fig');
+    savefig(interplanetary, '.\Figures\meshwga\interplanetary.fig');
+    fprintf('Results and figure saved\n');
 
 end
 

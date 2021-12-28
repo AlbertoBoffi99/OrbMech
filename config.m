@@ -27,20 +27,24 @@ astro.h_atm = 100;
 
 %% MINIMIZATION SETTINGS
 
-% A constraint matrix for GA and fmincon
-optim.Acon = [ -1 0 0;
-               0 -1 0;
-               0 0 -1;
-               1 0 0;
-               0 1 0;
-               0 0 1;
-               -1 0 0;
-               0 0 1;
-               1 -1 0;
-               0 1 -1];
-
 % number of variables for GA
 optim.ga_nvars = 3;
+
+
+% A constraint matrix for GA and fmincon
+optim.Acon = [ -1 0 0;
+           0 -1 0;
+           0 0 -1;
+           1 0 0;
+           0 1 0;
+           0 0 1;
+           -1 0 0;
+           0 0 1;
+           1 -1 0;
+           0 1 -1];
+
+% minimum ToF of Lambert arcs toavoid absurd velocities
+optim.tof_minimum = 30;
 
 if options.method == 1
 
@@ -48,9 +52,18 @@ if options.method == 1
     % number of elements in departure window vector
     optim.nmesh_dep = 100;
     % number of elements in each flyby window vector
-    optim.nmesh_fly = 50;
+    optim.nmesh_fly = 300;
+    % number of elements in each arrival window vector
+    optim.nmesh_arr = 300;
+
+     % mesh settings:
+    % number of elements in departure window vector
+    optim.nmesh_dep = 25;
+    % number of elements in each flyby window vector
+    optim.nmesh_fly = 100;
     % number of elements in each arrival window vector
     optim.nmesh_arr = 100;
+
 
 end
 
@@ -58,11 +71,11 @@ if options.method == 2
 
     % mesh settings:
     % number of elements in departure window vector
-    optim.nmesh_dep = 10;
+    optim.nmesh_dep = 200;
     % number of elements in each flyby window vector
-    optim.nmesh_fly = 25;
+    optim.nmesh_fly = 1;
     % number of elements in each arrival window vector
-    optim.nmesh_arr = 25;
+    optim.nmesh_arr = 1;
 
 end
 
@@ -99,7 +112,7 @@ arrival.SW = 0.5*arrival.tof_max/optim.nmesh_arr;
 % random numbre generator settings
 rng ('shuffle')
 % options for GA
-options.ga_options = optimoptions("ga","ConstraintTolerance", 1e-6,"PopulationSize", 150, "MaxGenerations", 30, "FunctionTolerance", 1e-6, "Display", "off", 'PlotFcn', {@gaplotbestf,@gaplotstopping});
+options.ga_options = optimoptions("ga","ConstraintTolerance", 1e-6,"PopulationSize", 150, "MaxGenerations", 30, "FunctionTolerance", 1e-6, "Display", "off");%, 'PlotFcn', {@gaplotbestf,@gaplotstopping});
 % options for fmincon
 options.fmincon_options = optimoptions("fmincon", "Display", "off");
 % options for fsolve

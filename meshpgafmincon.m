@@ -3,7 +3,6 @@
 %   on Venus through a fly-by around the Earth
 
 % TO DO
-% - bring Dtfb calculation outside plotting.m
 % - add scatter to pork chop legend
 % - set ythicklabel to latex
 
@@ -121,8 +120,8 @@ for i = 1:1:optim.noptim
                      results.dates(3) + arrival.SW; ...
                     - departure.date_min; ...
                     arrival.date_max;
-                    0;
-                    0];
+                    optim.tof_minimum;
+                    optim.tof_minimum];
     
     % optimization of Dv using GA
     [temp.dates, temp.Dv, temp.GA_exitflag] = ...
@@ -167,6 +166,10 @@ fprintf('\n     Genetic algorithm and gradient method optimization conlcuded\n')
 
 % close waitbar
 delete(temp.wb)
+
+%% TIME SPENT DURING FLYBY
+
+run fbtime.m
 
 %-------------------------------------------------------------------------%
 
@@ -217,7 +220,12 @@ fprintf("     time spent inside Earth's SOI: %g [s] \n\n", results.Dtfb);
 if options.save
 
     save('.\Results\meshpgafmincon_results.mat', 'results');
-    fprintf('Results saved\n');
+    savefig(flyby, '.\Figures\meshpgafmincon\flyby.fig');
+    savefig(pcpL1, '.\Figures\meshpgafmincon\pcpL1.fig');
+    savefig(pcpL2, '.\Figures\meshpgafmincon\pcpL2.fig');
+    savefig(interplanetary, '.\Figures\meshpgafmincon\interplanetary.fig');
+    savefig(minimization, '.\Figures\meshpgafmincon\minimization.fig');
+    fprintf('Results and figure saved\n');
 
 end
 
