@@ -161,11 +161,11 @@ end
 % if the user asks for saving results 
 if options.save
 
-    save('.\Results\', 'results');
-    savefig(name, '.\Figures\folder\name.fig');
+%     save('.\Results\', 'results');
+%     savefig(name, '.\Figures\folder\name.fig');
     fprintf('Results and figure saved\n');
 
 end
 
 % clear workspace
-clearvars -except 
+clearvars -except astro choice fig filt nominal options per real repper repun
