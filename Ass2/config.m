@@ -1,75 +1,122 @@
-% selected date for starting the simulation
-date_start = [2018 12 20 0 0 0]; 
-MJD2000 = date2mjd2000(date_start); % [days]
+% CONFIGURATION FILE
+% In this file all numerical data is declared
 
-% Earth's gravitational parameter
-muE = astroConstants(13);
+%-------------------------------------------------------------------------%
 
-% real satellite
-A = importdata("RealKeplerian1.txt", '\t');
-
-Kep_real = zeros(length(A)/2, 5);
-z = 1;
-for j=2:2:length(A)
-    time_real(z) = str2double()
-    Kep_real(z,3) = str2double(extractBetween(A(j),9,16));
-    Kep_real(z,4) = str2double(extractBetween(A(j),18,25));
-    Kep_real(z,2) = str2double(extractBetween(A(j),27,33))*1e-7;
-    Kep_real(z,5) = str2double(extractBetween(A(j),35,42));
-    Kep_real(z,1) = (muE/(str2double(extractBetween(A(j),53,63))*2*pi/(24*3600))^2)^(1/3);
-    z = z+1;
-end
-% 
-% z = 1;
-% for j=1:2:length(A)
-%     time_real(z) = str2double(extractBetween(A(j),19,32));
-%     year_real(z) = 2000 + floor(time_real(z)/1000);
-%     day_real(z) = time_real(z) - (year_real(z)-2000)*1000;
-%     z = z+1;
-% end
-
-
-
+%% ASTRO CONSTANTS and PARAMETERS
 
 % Earth's rotational angular velocity
-omeE = deg2rad(15.04)/3600; % [rad/s]
+astro.wE = deg2rad(15.04)/3600; % [rad/s]
+
+% Earth's gravitational parameter
+astro.muE = astroConstants(13);
 
 % Earth's radius
-Re = astroConstants(23);
+astro.RE = astroConstants(23);
 
 % Gravitatonal field constant of the Earth
-J2 = astroConstants(9);
+astro.J2 = astroConstants(9);
 
 % parameters for repeating groundtracks
-k = 2;
-m = 1;
+astro.k = 2;
+astro.m = 1;
 
 % SRP parameters
-cr = 1; 
-A2m = 3.000; % [m^2/kg]
+astro.cr = 1; 
+astro.A2m = 3.000; % [m^2/kg]
 
-%% nominal orbit
+%% ORBIT DATA
+
+% selected date for starting the simulation
+real.date_start = [2018 12 20 0 0 0];
+% convert it to mjd2000
+real.mjd2000_start = date2mjd2000(real.date_start);
+
+% real satellite ephemerides import and save
+real.data = importdata("ephemerides.txt", '\t');
+
+z = 1;
+for j = 2 : 2 : length(real.data)
+    real.kep(z,3) = str2double(extractBetween(real.data(j),9,16));
+    real.kep(z,4) = str2double(extractBetween(real.data(j),18,25));
+    real.kep(z,2) = str2double(extractBetween(real.data(j),27,33))*1e-7;
+    real.kep(z,5) = str2double(extractBetween(real.data(j),35,42));
+    real.kep(z,1) = (astro.muE/(str2double(extractBetween(real.data(j),53,63))*2*pi/(24*3600))^2)^(1/3);
+    z = z+1;
+end
+clear z j
+
+% extract time vector from ephemerides
+% z = 1;
+% for j = 1 : 2 : length(real.data)
+%     real.time(z) = str2double(extractBetween(real.data(j),19,32));
+%     real.year(z) = 2000 + floor(real.time(z)/1000);
+%     real.day(z) = real.time(z) - (real.year(z)-2000)*1000;
+%     z = z+1;
+% end
+% clear z
 
 % assigned initial condition
-a0 = 2.5952e+4; % [km]
-e0 = 0.5555;
-i0 = 17.7395; % [deg]
+nominal.a0 = 2.5952e+4; % [km]
+nominal.e0 = 0.5555;
+nominal.i0 = 17.7395; % [deg]
+
+% satellite period
+nominal.T = 2*pi/sqrt(astro.muE/nominal.a0^3); % [s]
 
 % other Keplerian elements to be supposed 
-Ome0 = Kep_real(1,4); % [deg]
-ome0 = Kep_real(1,5); % [deg]
-f0 = 0; % [deg]
+nominal.Ome0 = real.kep(1,4); % [deg]
+nominal.ome0 = real.kep(1,5); % [deg]
+nominal.f0 = 0; % [deg]
 
-Kep_elements = [a0, e0, deg2rad(i0), deg2rad(Ome0), deg2rad(ome0), deg2rad(f0)];
+% collect them into a vector
+nominal.kep = [nominal.a0, nominal.e0, deg2rad(nominal.i0), deg2rad(nominal.Ome0), deg2rad(nominal.ome0), deg2rad(nominal.f0)];
 
 % initial longitude 
-lon0 = 0; % [deg]
+nominal.lon0 = 0; % [deg]
 
 % initial time 
-t0 = 0; % [s]
+nominal.t0 = 0; % [s]
 
 % perigee height
-hp = 5164.654; % [km]
+nominal.hp = 5164.654; % [km]
+
+%% CHOICES
+
+% Groundtracks integration time interval:
+%       1 for 1 day
+%       2 for 10 days
+%       3 for 1 period
+choice.GTperiod = 1;
+
+% Keplerian element to filter:
+%       1 for semi-major axis 'a'
+%       2 for eccentricity 'e'
+choice.filtering1 = 1;
+
+% Keplerian element to filter:
+%       1 for inclination 'i'
+%       2 for RAAN 'Omega'
+%       3 for pericenter anomaly 'omega'
+%       4 for true anomaly 'f'
+choice.filtering2 = 1;
+
+%% OTHER OPTIONS
 
 % ode solver options
-options_sol = odeset( 'RelTol', 1e-13, 'AbsTol', 1e-14);
+options.ode = odeset( 'RelTol', 1e-13, 'AbsTol', 1e-14);
+
+% saving options
+options.save = 1;
+
+% plotting options
+options.plot = 1;
+
+% this script changes all interpreters from tex to latex
+list_factory = fieldnames(get(groot,'factory'));
+index_interpreter = find(contains(list_factory,'Interpreter'));
+for i = 1:length(index_interpreter)
+    default_name = strrep(list_factory{index_interpreter(i)},'factory','default');
+    set(groot, default_name,'latex');
+end
+clear list_factory index_interpreter default_name
