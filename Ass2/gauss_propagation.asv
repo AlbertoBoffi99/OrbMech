@@ -7,7 +7,8 @@ function [dy] = gauss_propagation(t,y,muP,Rp,J2,cr,A2m)
 % PROTOTYPE
 %     [dy] = gauss_propagation(t,y,muP,Rp,J2,cr,A2m)
 %     
-% INPUT 
+% INPUT
+%   
 %     muP [constant]   gravitational constant of the planet [km^3/s^2]
 %     Rp [constant]    mean radius of the planet [km]
 %     J2 [constant]    gravitatonal field constant of the Earth
@@ -16,7 +17,7 @@ function [dy] = gauss_propagation(t,y,muP,Rp,J2,cr,A2m)
 %     A2m[constant]    surface to mass rate [m^2/kg]
 %
 % OUTPUT
-%     dy [6x1]           Keplerian elements differential equations
+%     dy [6x1]           Keplerian elements derivatives
 %
 % CONTRIBUTORS
 %     Alberto Boffi, Enrico Raviola, Andrea Campagna, Luca Ciavirella
@@ -61,7 +62,7 @@ function [dy] = gauss_propagation(t,y,muP,Rp,J2,cr,A2m)
     nn = cross(hh,tt);
     R_car2tnh = [tt'; nn'; hh']; % Rotation matrix from cartesian to TNH
 
-    %% DETERMINATION OF KEPLERIAN ELEMENTS DIFFERENTIAL EQUATIONS
+    %% DETERMINATION OF KEPLERIAN ELEMENTS DERIVATIVES
     a_tnh = R_car2tnh * a_car; % acceleration in TNH frame
     % selecting components
     a_t = a_tnh(1);
@@ -82,7 +83,7 @@ function [dy] = gauss_propagation(t,y,muP,Rp,J2,cr,A2m)
     om_dot = (1/(e*v_norm)) * ( 2*sin(th)*a_t + (2*e + (r_norm/a)*cos(th))*a_n ) - (r_norm*sin(th_star)*cos(i)/(h*sin(i)))*a_h;
     th_dot = h/r_norm^2 - (1/(e*v_norm)) * ( 2*sin(th)*a_t + (2*e + (r_norm/a)*cos(th))*a_n );
 
-    % Differential equations of the state (Keplerian elements)
+    % Derivative of the state (Keplerian elements)
     dy = [a_dot; e_dot; i_dot; OM_dot; om_dot; th_dot];
 
 end
