@@ -4,7 +4,6 @@
 
 % TO DO
 % - add scatter to pork chop legend
-% - set ythicklabel to latex
 
 %-------------------------------------------------------------------------%
 

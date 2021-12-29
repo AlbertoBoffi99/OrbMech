@@ -66,7 +66,7 @@ xtickangle(45);
 xlabel('Jupiter departure date', 'FontSize', 18);
 ylabel('Earth flyby date', 'FontSize', 18);
 set(Color,'YtickLabel');
-Color.Label.String = 'Delta V1 [km/s]';
+Color.Label.String = '$\Delta V1 [km/s]$';
 Color.Label.Interpreter = 'latex';
 grid on
 title('\textbf{Departure - Flyby Pork Chop Plot}', 'FontSize', 18);
@@ -132,7 +132,7 @@ xtickangle(45);
 xlabel('Earth flyby date', 'FontSize', 18);
 ylabel('Venus arrival date', 'FontSize', 18);
 set(Color,'YtickLabel');
-Color.Label.String = 'Delta V2 [km/s]';
+Color.Label.String = '$\Delta V2 [km/s]$';
 Color.Label.Interpreter = 'latex';
 grid on
 title('\textbf{Flyby - Arrival Pork Chop Plot}', 'FontSize', 18);
