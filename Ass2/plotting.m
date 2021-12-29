@@ -133,15 +133,15 @@ for i = [1 2]
     end
     
     figure();
-    plot((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, ...
+    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, ...
         abs(per.kep_unwr(:,par) - per.kep_gauss(:,par))/norm);
     grid on
     % title ("relative error of 'name' between gauss and cartesian propagation")
     
     figure();
-    plot((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, per.kep_gauss(:,par));
+    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_gauss(:,par));
     hold on
-    plot((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, per.kep_unwr(:,par));
+    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_unwr(:,par));
     grid on
     legend ('Gauss', 'Cartesian')
     titlestr = strcat ("Propagation of ", name);
@@ -175,15 +175,15 @@ for i = 1 : 4
     end    
     
     figure();
-    plot ((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, rad2deg(abs(per.kep_unwr(:,par) - per.kep_gauss(:,par)))./abs(norm));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(abs(per.kep_unwr(:,par) - per.kep_gauss(:,par)))./abs(norm));
     grid on
     titlestr = strcat("Relative error of ", name, " between Gauss and cartesian propagation");
     title (titlestr)
     
     figure();
-    plot ((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, rad2deg(per.kep_gauss(:,par)));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_gauss(:,par)));
     hold on
-    plot ((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, rad2deg(per.kep_unwr(:,par)));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_unwr(:,par)));
     grid on
     legend ('Gauss', 'Cartesian')
 
@@ -201,16 +201,16 @@ end
 
 for i = 1:2
     gaussvsreal = figure();
-    plot ((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, per.kep_gauss_real(:,i), ...
-        (temp.tspan_real-real.mjd2000_start*24*3600)/nominal.T, real.kep(:,i));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_gauss_real(:,i), ...
+        temp.tspan_real/(24*3600)-real.mjd2000_start, real.kep(:,i));
     grid on
     legend ('Gauss', 'Real')
 end
 
 for i = 3:5
     gaussvsreal = figure();
-    plot ((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, rad2deg(per.kep_gauss_real(:,i)), ...
-        (temp.tspan_real-real.mjd2000_start*24*3600)/nominal.T, real.kep(:,i));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_gauss_real(:,i)), ...
+        temp.tspan_real/(24*3600)-real.mjd2000_start, real.kep(:,i));
     grid on
     legend ('Gauss', 'Real')
 end
@@ -235,9 +235,9 @@ for i = 1 : 2
     filt.kep_gauss = movmean(per.kep_gauss(:,par), k_par);
     
     figure();
-    plot ((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, per.kep_gauss(:,par));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_gauss(:,par));
     hold on
-    plot ((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, filt.kep_gauss);
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, filt.kep_gauss);
     grid on
     legend ('Original', 'Filtered')
 
@@ -274,9 +274,9 @@ for i = 3 : 6
     filt.kep_gauss = movmean(per.kep_gauss(:,par), k_par);
 
     figure();
-    plot ((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, rad2deg(per.kep_gauss(:,par)));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_gauss(:,par)));
     hold on
-    plot ((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, rad2deg(filt.kep_gauss));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(filt.kep_gauss));
     grid on
     legend ('Original', 'Filtered')
 
