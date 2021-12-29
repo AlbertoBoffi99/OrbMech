@@ -89,11 +89,18 @@ ylabel('lat [deg]');
 
 %% PERTURBED ORBITS
 
+% https://it.mathworks.com/matlabcentral/answers/101346-how-do-i-use-multiple-colormaps-in-a-single-figure-in-r2014a-and-earlier#Example_1
+
 % propagation of the orbit in Cartesian elements
 fig.per = figure();
-plot3(per.car(:,1), per.car(:,2), per.car(:,3));
-hold on 
-earth_sphere
+patch(per.car(:,1), per.car(:,2), per.car(:,3), per.time_car, 'FaceColor', 'none', 'EdgeColor', 'interp', 'LineWidth', 1);
+c = colorbar('TickLabelInterpreter', 'latex');
+c.Label.String = '[s]';
+c.Label.FontSize = 14;
+c.Label.Interpreter = 'latex';
+hold off
+opts.units = 'km';
+planet3D('Earth', opts, [0 0 0]);
 xlabel('$r_x [km]$')
 ylabel('$r_y [km]$')
 zlabel('$r_z [km]$')
@@ -103,9 +110,14 @@ title("Propagation of the perturbed orbit in Cartesian elements");
 
 % propagation of the orbit in Cartesian elements converted from gauss
 fig.per_gauss = figure();
-plot3(per.car_gauss(:,1), per.car_gauss(:,2), per.car_gauss(:,3));
-hold on 
-earth_sphere
+patch(per.car_gauss(:,1), per.car_gauss(:,2), per.car_gauss(:,3), per.time_kep, 'FaceColor', 'none', 'EdgeColor', 'interp', 'LineWidth', 1);
+c = colorbar('TickLabelInterpreter', 'latex');
+c.Label.String = '[s]';
+c.Label.FontSize = 14;
+c.Label.Interpreter = 'latex';
+hold off
+opts.units = 'km';
+planet3D('Earth', opts, [0 0 0]);
 xlabel('$r_x [km]$')
 ylabel('$r_y [km]$')
 zlabel('$r_z [km]$')
@@ -122,26 +134,26 @@ for i = [1 2]
     switch i
         case 1
             name = 'a';
-            par = 1;
-            norm = nominal.kep(1);
+            pos = 1;
+            denom = nominal.kep(1);
         
         case 2
             name = 'e';
-            par = 2;
-            norm = 1;
+            pos = 2;
+            denom = 1;
             
     end
     
     figure();
     plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, ...
-        abs(per.kep_unwr(:,par) - per.kep_gauss(:,par))/norm);
+        abs(per.kep_unwr(:,pos) - per.kep_gauss(:,pos))/denom);
     grid on
     % title ("relative error of 'name' between gauss and cartesian propagation")
     
     figure();
-    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_gauss(:,par));
+    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_gauss(:,pos));
     hold on
-    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_unwr(:,par));
+    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_unwr(:,pos));
     grid on
     legend ('Gauss', 'Cartesian')
     titlestr = strcat ("Propagation of ", name);
@@ -154,45 +166,42 @@ for i = 1 : 4
     switch i
          case 1
             name = 'i';
-            par =3;
-            norm = 2*pi;
+            pos =3;
+            denom = 2*pi;
     
         case 2
             name = 'Om';
-            par = 4;
-            norm = 2*pi;
+            pos = 4;
+            denom = 2*pi;
     
         case 3
             name = 'om';
-            par = 5;
-            norm = 2*pi;
+            pos = 5;
+            denom = 2*pi;
     
         case 4
             name = 'f';
-            par = 6;
-            norm = per.kep_unwr(:,6);
+            pos = 6;
+            denom = per.kep_unwr(:,6);
     
     end    
     
     figure();
-    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(abs(per.kep_unwr(:,par) - per.kep_gauss(:,par)))./abs(norm));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(abs(per.kep_unwr(:,pos) - per.kep_gauss(:,pos)))./abs(denom));
     grid on
     titlestr = strcat("Relative error of ", name, " between Gauss and cartesian propagation");
     title (titlestr)
     
     figure();
-    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_gauss(:,par)));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_gauss(:,pos)));
     hold on
-    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_unwr(:,par)));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_unwr(:,pos)));
     grid on
     legend ('Gauss', 'Cartesian')
 
 end
 
 %% GAUSS PERTURBED VS REAL TRAJECTORY
-
-% temp.tspan_real = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*3600 + 3*365*3600*24, length(real.data)/2);
-% temp.tspan = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*3600 + 3*365*3600*24, 40000);
 
 % condizioni iniziali nuova integrazione su tspan_real come quelle del
 % satellite reale (f0 arbitraria)
@@ -201,15 +210,15 @@ end
 
 for i = 1:2
     gaussvsreal = figure();
-    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_gauss_real(:,i), ...
-        temp.tspan_real/(24*3600)-real.mjd2000_start, real.kep(:,i));
+    plot (temp.tspan_real/(24*3600)-real.mjd2000_start, per.kep_gauss_real(:,i), ...
+          temp.tspan_real/(24*3600)-real.mjd2000_start, real.kep(:,i));
     grid on
     legend ('Gauss', 'Real')
 end
 
 for i = 3:5
     gaussvsreal = figure();
-    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_gauss_real(:,i)), ...
+    plot (temp.tspan_real/(24*3600)-real.mjd2000_start, rad2deg(per.kep_gauss_real(:,i)), ...
         temp.tspan_real/(24*3600)-real.mjd2000_start, real.kep(:,i));
     grid on
     legend ('Gauss', 'Real')
@@ -222,20 +231,20 @@ for i = 1 : 2
 
     switch i
         case 1
-            par = 1;
+            pos = 1;
             % number of elements in the movemean
-            k_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+            filter_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
         
         case 2
-            par = 2;
+            pos = 2;
             % number of elements in the movemean
-            k_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+            filter_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
     end
     
-    filt.kep_gauss = movmean(per.kep_gauss(:,par), k_par);
+    filt.kep_gauss = movmean(per.kep_gauss(:,pos), filter_par);
     
     figure();
-    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_gauss(:,par));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_gauss(:,pos));
     hold on
     plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, filt.kep_gauss);
     grid on
@@ -248,33 +257,33 @@ for i = 3 : 6
     switch i
         case 3
             name = 'i';
-            par = 3;
+            pos = 3;
             % number of elements in the movemean
-            k_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+            filter_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
         
         case 4
             name = 'Om';
-            par = 4;
+            pos = 4;
             % number of elements in the movemean
-            k_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+            filter_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
     
         case 5
             name = 'om';
-            par = 5;
+            pos = 5;
             % number of elements in the movemean
-            k_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+            filter_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
     
         case 6
             name = 'f';
-            par = 6;
+            pos = 6;
             % number of elements in the movemean
-            k_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+            filter_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
     end
     
-    filt.kep_gauss = movmean(per.kep_gauss(:,par), k_par);
+    filt.kep_gauss = movmean(per.kep_gauss(:,pos), filter_par);
 
     figure();
-    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_gauss(:,par)));
+    plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_gauss(:,pos)));
     hold on
     plot (temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(filt.kep_gauss));
     grid on

@@ -79,8 +79,8 @@ temp.tspan_real = real.day*24*3600;
     (t, s, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_3year, nominal.kep', options.ode); 
 
 % propagation of Keplerian elements comparison with real satellite
-[per.time_kep_real, per.kep_gauss_real] = ode113( @(t,s) gauss_propagation...
-    (t, s, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_3year, real.kep0', options.ode); 
+[per.time_kep_real, per.kep_gauss_real] = ode113(@(t,s) gauss_propagation...
+    (t, s, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_real, real.kep0', options.ode); 
 
 % Keplerian elements to cartesian elements
 for j = 1:length(temp.tspan_3year)
@@ -127,9 +127,8 @@ end
 % if the user asks for saving results 
 if options.save
 
-%     save('.\Results\', 'results');
-%     savefig(name, '.\Figures\folder\name.fig');
-    fprintf('Results and figure saved\n');
+    save('.\Results\workspace.mat');
+    fprintf('Results saved\n');
 
 end
 

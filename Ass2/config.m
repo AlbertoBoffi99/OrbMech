@@ -63,9 +63,22 @@ for j = 1 : 2 : length(real.data)
     real.time(z) = str2double(extractBetween(real.data(j),19,32));
     real.year(z) = 2000 + floor(real.time(z)/1000);
     real.day(z) = real.time(z) - (real.year(z)-2000)*1000 + real.sidereal_year*floor(real.time(z)/1000); % [days]
+    if z > 1
+        if real.day(z) - real.day(z-1) <= 0;
+            real.day(z) = real.day(z) + 1e-10;
+        end
+    end
     z = z+1;
 end
 clear z
+
+for i = 2:1:size(real.day,2)
+    
+ if real.day(i) == real.day(i-1);
+     real.day(i) = real.day(i-1) + 1e-10;
+ end
+
+end
 
 % assigned initial condition
 nominal.a0 = 2.5952e+4; % [km]
@@ -78,7 +91,7 @@ nominal.T = 2*pi/sqrt(astro.muE/nominal.a0^3); % [s]
 % other Keplerian elements to be supposed 
 nominal.Ome0 = real.kep(1,4); % [deg]
 nominal.ome0 = real.kep(1,5); % [deg]
-nominal.f0 = 0; % [deg]
+nominal.f0 = 30; % [deg]
 
 % collect them into a vector
 nominal.kep = [nominal.a0, nominal.e0, deg2rad(nominal.i0), deg2rad(nominal.Ome0), deg2rad(nominal.ome0), deg2rad(nominal.f0)];
@@ -115,7 +128,7 @@ choice.filtering2 = 1;
 %% OTHER OPTIONS
 
 % ode solver options
-options.ode = odeset( 'RelTol', 1e-13, 'AbsTol', 1e-14);
+options.ode = odeset( 'RelTol', 1e-6, 'AbsTol', 1e-6);
 
 % saving options
 options.save = 1;
