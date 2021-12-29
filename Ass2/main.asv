@@ -94,6 +94,53 @@ per.kep_unwr(:,6) = unwrap(per.kep(:,6));
 per.kep_unwr(:,4) = unwrap(per.kep(:,4));
 per.kep_unwr(:,5) = unwrap(per.kep(:,5));
 
+%% FILTERING OF PERTURBED KEPLERIAN ELEMETS
+
+switch choice.filtering1
+    case 1
+        par = 1;
+        % number of elements in the movemean
+        k_par = nominal.Tnominal.T/3600/nominal.T*length(temp.tspan_3year);
+    
+    case 2
+        par = 2;
+        % number of elements in the movemean
+        k_par = nominal.T/3600/nominal.T*length(temp.tspan_3year);
+
+end
+
+filt.kep_gauss1 = movmean(per.kep_gauss(:,par), k_par);
+
+
+switch choice.filtering2
+    case 1
+        name = 'i';
+        par = 3;
+        % number of elements in the movemean
+        k_par = nominal.T/3600/nominal.T*length(temp.tspan_3year);
+    
+    case 2
+        name = 'Om';
+        par = 4;
+        % number of elements in the movemean
+        k_par = nominal.T/3600/nominal.T*length(temp.tspan_3year);
+
+    case 3
+        name = 'om';
+        par = 5;
+        % number of elements in the movemean
+        k_par = nominal.T/3600/nominal.T*length(temp.tspan_3year);
+
+    case 4
+        name = 'f';
+        par = 6;
+        % number of elements in the movemean
+        k_par = nominal.T/3600/nominal.T*length(temp.tspan_3year);
+end
+
+filt.kep_gauss2 = movmean(per.kep_gauss(:,par), k_par);
+
+
 %-------------------------------------------------------------------------%
 
 % clock stopped
