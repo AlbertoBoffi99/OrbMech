@@ -53,15 +53,19 @@ end
 
 clear z
 
+% initial condition for integration propagation vs real satellite
+real.kep0 = [real.kep(1,1) real.kep(1,2) deg2rad(real.kep(1,3)) deg2rad(real.kep(1,4)) deg2rad(real.kep(1,5)) 0]; 
+
 % extract time vector from ephemerides
-% z = 1;
-% for j = 1 : 2 : length(real.data)
-%     real.time(z) = str2double(extractBetween(real.data(j),19,32));
-%     real.year(z) = 2000 + floor(real.time(z)/1000);
-%     real.day(z) = real.time(z) - (real.year(z)-2000)*1000;
-%     z = z+1;
-% end
-% clear z
+z = 1;
+real.sidereal_year = 365 + 6/24 + 9/(60*24) + 9.54/(60*24*60); % [days]
+for j = 1 : 2 : length(real.data)
+    real.time(z) = str2double(extractBetween(real.data(j),19,32));
+    real.year(z) = 2000 + floor(real.time(z)/1000);
+    real.day(z) = real.time(z) - (real.year(z)-2000)*1000 + real.sidereal_year*floor(real.time(z)/1000); % [days]
+    z = z+1;
+end
+clear z
 
 % assigned initial condition
 nominal.a0 = 2.5952e+4; % [km]

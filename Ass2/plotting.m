@@ -191,11 +191,17 @@ end
 
 %% GAUSS PERTURBED VS REAL TRAJECTORY
 
-temp.tspan_real = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*3600 + 3*365*3600*24, length(real.data)/2);
-temp.tspan = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*3600 + 3*365*3600*24, 40000);
+% temp.tspan_real = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*3600 + 3*365*3600*24, length(real.data)/2);
+% temp.tspan = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*3600 + 3*365*3600*24, 40000);
+
+% condizioni iniziali nuova integrazione su tspan_real come quelle del
+% satellite reale (f0 arbitraria)
+
+% plotta confronto reale vs gauss perturbed
+
 for i = 1:2
     gaussvsreal = figure();
-    plot ((temp.tspan-real.mjd2000_start*24*3600)/nominal.T, per.kep_gauss(:,i), ...
+    plot ((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, per.kep_gauss_real(:,i), ...
         (temp.tspan_real-real.mjd2000_start*24*3600)/nominal.T, real.kep(:,i));
     grid on
     legend ('Gauss', 'Real')
@@ -203,7 +209,7 @@ end
 
 for i = 3:5
     gaussvsreal = figure();
-    plot ((temp.tspan-real.mjd2000_start*24*3600)/nominal.T, rad2deg(per.kep_gauss(:,i)), ...
+    plot ((temp.tspan_3year-real.mjd2000_start*24*3600)/nominal.T, rad2deg(per.kep_gauss_real(:,i)), ...
         (temp.tspan_real-real.mjd2000_start*24*3600)/nominal.T, real.kep(:,i));
     grid on
     legend ('Gauss', 'Real')
@@ -218,12 +224,12 @@ for i = 1 : 2
         case 1
             par = 1;
             % number of elements in the movemean
-            k_par = nominal.T*nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+            k_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
         
         case 2
             par = 2;
             % number of elements in the movemean
-            k_par = nominal.T*nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+            k_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
     end
     
     filt.kep_gauss = movmean(per.kep_gauss(:,par), k_par);
@@ -244,25 +250,25 @@ for i = 3 : 6
             name = 'i';
             par = 3;
             % number of elements in the movemean
-            k_par = nominal.T*nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+            k_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
         
         case 4
             name = 'Om';
             par = 4;
             % number of elements in the movemean
-            k_par = nominal.T*nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+            k_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
     
         case 5
             name = 'om';
             par = 5;
             % number of elements in the movemean
-            k_par = nominal.T*nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+            k_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
     
         case 6
             name = 'f';
             par = 6;
             % number of elements in the movemean
-            k_par = nominal.T*nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+            k_par = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
     end
     
     filt.kep_gauss = movmean(per.kep_gauss(:,par), k_par);

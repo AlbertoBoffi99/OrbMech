@@ -67,6 +67,9 @@ clear temp
 % time interval of integration 
 temp.tspan_3year = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*3600 + 3*365*3600*24, 40000);
 
+% time interval of integration comparison with real satellite
+temp.tspan_real = real.day*24*3600; 
+
 % propagation of Cartesian elements
 [per.time_car, per.car] = ode113( @(t,s) ode_perturbed ...
     (t, s, astro.muE,  astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_3year, [nominal.r0; nominal.v0], options.ode ); 
@@ -74,6 +77,10 @@ temp.tspan_3year = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*36
 % propagation of Keplerian elements
 [per.time_kep, per.kep_gauss] = ode113( @(t,s) gauss_propagation...
     (t, s, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_3year, nominal.kep', options.ode); 
+
+% propagation of Keplerian elements comparison with real satellite
+[per.time_kep_real, per.kep_gauss_real] = ode113( @(t,s) gauss_propagation...
+    (t, s, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_3year, real.kep0', options.ode); 
 
 % Keplerian elements to cartesian elements
 for j = 1:length(temp.tspan_3year)
