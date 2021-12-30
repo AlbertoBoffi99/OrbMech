@@ -66,6 +66,9 @@ end
 %% INTEGRATION OF PERTURBED ORBITS (SRP and J2)
 
 % time interval of integration 
+temp.tspan_3D = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*3600 + 500*nominal.T, 50000);
+
+% time interval of integration 
 temp.tspan_3year = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*3600 + 3*365*3600*24, 40000);
 
 % time interval of integration comparison with real satellite
@@ -75,9 +78,17 @@ temp.tspan_real = real.day*24*3600;
 [per.time_car, per.car] = ode113( @(t,s) ode_perturbed ...
     (t, s, astro.muE,  astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_3year, [nominal.r0; nominal.v0], options.ode ); 
 
+% propagation of Cartesian elements
+[per.time_car3D, per.car3D] = ode113( @(t,s) ode_perturbed ...
+    (t, s, astro.muE,  astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_3D, [nominal.r0; nominal.v0], options.ode ); 
+
 % propagation of Keplerian elements
 [per.time_kep, per.kep_gauss] = ode113( @(t,s) gauss_propagation...
     (t, s, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_3year, nominal.kep', options.ode);
+
+% propagation of Keplerian elements
+[per.time_kep3D, per.kep_gauss3D] = ode113( @(t,s) gauss_propagation...
+    (t, s, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_3D, nominal.kep', options.ode);
 
 % propagation of Keplerian elements comparison with real satellite
 [per.time_kep_real, per.kep_gauss_real] = ode113(@(t,s) gauss_propagation...
@@ -91,6 +102,12 @@ per.kep_gauss_real_filt = movmean(per.kep_gauss_real(:,1), HFfilter);
 for j = 1:length(temp.tspan_3year)
     [per.car_gauss(j,1:3), per.car_gauss(j, 4:6)] = kep2car(per.kep_gauss(j,1), per.kep_gauss(j,2),...
         per.kep_gauss(j,3), per.kep_gauss(j,4), per.kep_gauss(j,5), per.kep_gauss(j,6), astro.muE);
+end
+
+% Keplerian elements to cartesian elements for 3D plotting
+for j = 1:length(temp.tspan_3D)
+    [per.car_gauss3D(j,1:3), per.car_gauss3D(j, 4:6)] = kep2car(per.kep_gauss3D(j,1), per.kep_gauss3D(j,2),...
+        per.kep_gauss3D(j,3), per.kep_gauss3D(j,4), per.kep_gauss3D(j,5), per.kep_gauss3D(j,6), astro.muE);
 end
 
 % Cartesian elements to keplerian elements

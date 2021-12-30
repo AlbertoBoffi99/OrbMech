@@ -22,6 +22,7 @@ filt.color = [81 53 26]/256;
 
 % plotting the nominal orbit
 figure();
+set(gcf, 'WindowState', 'Maximized')
 opts.units = 'km';
 planet3D('Earth', opts, [0 0 0]);
 hold on 
@@ -48,6 +49,7 @@ end
 %% GROUNDTRACKS
 
 figure();
+set(gcf, 'WindowState', 'Maximized')
 % plot of unperturbed case
 hold off
 geoplot( rad2deg(nominal.lat), wrapTo180(rad2deg(nominal.lon)), 'o', 'MarkerSize', 2, 'Color', nominal.color);
@@ -86,6 +88,7 @@ end
 %-------------------------------------------------------------------------%
 
 figure();
+set(gcf, 'WindowState', 'Maximized')
 % plot of repeating unperturbed case
 hold off
 geoplot( rad2deg(repun.lat), wrapTo180(rad2deg(repun.lon)), 'o', 'MarkerSize', 2, 'Color', repun.color);
@@ -121,10 +124,11 @@ end
 
 % propagation of the orbit in Cartesian elements
 figure();
-patch(per.car(:,1), per.car(:,2), per.car(:,3), per.time_car/(24*3600), 'FaceColor', 'none', 'EdgeColor', 'interp', 'LineWidth', 1);
+set(gcf, 'WindowState', 'Maximized')
+p = patch(per.car3D(:,1), per.car3D(:,2), per.car3D(:,3), per.time_car3D(:)/(24*3600), 'FaceColor', 'none', 'EdgeColor', 'interp');
 c = colorbar('TickLabelInterpreter', 'latex');
+colormap('turbo')
 c.Label.String = '[MJD2000]';
-% c.Position = [];
 c.Label.FontSize = 14;
 c.Label.Interpreter = 'latex';
 set(c.XLabel,{'Rotation','Position'},{0,[0.5 -0.1]})
@@ -147,10 +151,11 @@ end
 
 % Gauss propagation of the orbit elements
 figure();
-patch(per.car_gauss(:,1), per.car_gauss(:,2), per.car_gauss(:,3), per.time_kep/(24*3600), 'FaceColor', 'none', 'EdgeColor', 'interp', 'LineWidth', 1);
+set(gcf, 'WindowState', 'Maximized')
+patch(per.car_gauss3D(:,1), per.car_gauss3D(:,2), per.car_gauss3D(:,3), per.time_kep3D/(24*3600), 'FaceColor', 'none', 'EdgeColor', 'interp', 'LineWidth', 1);
 c = colorbar('TickLabelInterpreter', 'latex');
+colormap('turbo')
 c.Label.String = '[MJD2000]';
-% c.Position = [];
 c.Label.FontSize = 14;
 c.Label.Interpreter = 'latex';
 set(c.XLabel,{'Rotation','Position'},{0,[0.5 -0.1]})
@@ -192,8 +197,9 @@ for i = [1 2]
     end
     
     figure();
+    set(gcf, 'WindowState', 'Maximized')
     plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, ...
-        abs(per.kep_unwr(:,i) - per.kep_gauss(:,i))*100/denom, 'k');
+        abs(per.kep_unwr(:,i) - per.kep_gauss(:,i))*100/denom, 'k', 'LineWidth', 2 );
     grid on
     set(gca, 'FontSize', 14);
     xlabel('time [MJD2000]', 'FontSize', 14)
@@ -208,9 +214,10 @@ for i = [1 2]
     end
     
     figure();
-    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_gauss(:,i), 'Color', repper.color);
+    set(gcf, 'WindowState', 'Maximized')
+    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_gauss(:,i), 'Color', repper.color, 'LineWidth', 2 );
     hold on
-    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_unwr(:,i), 'Color', repun.color);
+    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, per.kep_unwr(:,i), 'Color', repun.color, 'LineWidth', 2 );
     grid on
     set(gca, 'FontSize', 14);
     xlabel('time [MJD2000]', 'FontSize', 14)
@@ -258,8 +265,9 @@ for i = 3 : 6
     end    
     
     figure();
+    set(gcf, 'WindowState', 'Maximized')
     plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, ...
-        rad2deg(abs(per.kep_unwr(:,i) - per.kep_gauss(:,i)))*100/denom, 'k');
+        rad2deg(abs(per.kep_unwr(:,i) - per.kep_gauss(:,i)))*100/denom, 'k', 'LineWidth', 2 );
     grid on
     set(gca, 'FontSize', 14);
     xlabel('time [MJD2000]', 'FontSize', 14)
@@ -267,16 +275,17 @@ for i = 3 : 6
     title("\textbf{Relative error between Gauss and Cartesian propagation}", 'FontSize', 18);
     subtitle(subtitlestr, "FontSize", 14)
 
-    % save figure
-    if options.save
-        filename = strcat('.\Results\err_rel', num2str(i));
-        savefig(filename);
-    end
+%     % save figure
+%     if options.save
+%         filename = strcat('.\Results\err_rel', num2str(i));
+%         savefig(filename);
+%     end
     
     figure();
-    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_gauss(:,i)), 'Color', repper.color);
+    set(gcf, 'WindowState', 'Maximized')
+    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_gauss(:,i)), 'Color', repper.color, 'LineWidth', 2 );
     hold on
-    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_unwr(:,i)), 'Color', repun.color);
+    plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, rad2deg(per.kep_unwr(:,i)), 'Color', repun.color, 'LineWidth', 2 );
     grid on
     set(gca, 'FontSize', 14);
     xlabel('time [MJD2000]', 'FontSize', 14)
@@ -286,24 +295,23 @@ for i = 3 : 6
     lgd.Location = 'southeastoutside';
     lgd.FontSize = 16;
 
-    % save figure
-    if options.save
-        filename = strcat('.\Results\el_prop', num2str(i));
-        savefig(filename);
-    end
+%     % save figure
+%     if options.save
+%         filename = strcat('.\Results\el_prop', num2str(i));
+%         savefig(filename);
+%     end
 
 end
 
 %% GAUSS PERTURBED VS REAL TRAJECTORY
 
-% condizioni iniziali nuova integrazione su tspan_real come quelle del
-% satellite reale (f0 arbitraria)
-
 % plotta confronto reale vs gauss perturbed
 
 figure();
-plot (per.time_kep_real/(24*3600)-real.mjd2000_start, per.kep_gauss_real_filt(:,1), 'Color', repper.color);
-plot (temp.tspan_real/(24*3600)-real.mjd2000_start, real.kep(:,1), 'Color', real.color);
+set(gcf, 'WindowState', 'Maximized')
+plot (per.time_kep_real/(24*3600)-real.mjd2000_start, per.kep_gauss_real_filt(:,1), 'Color', repper.color, 'LineWidth', 2 );
+hold on
+plot (temp.tspan_real/(24*3600)-real.mjd2000_start, real.kep(:,1), 'Color', real.color, 'LineWidth', 2 );
 grid on
 lgd = legend ('Gauss', 'Real');
 set(gca, 'FontSize', 14);
@@ -320,8 +328,10 @@ if options.save
 end
 
 figure();
-plot (per.time_kep_real/(24*3600)-real.mjd2000_start, per.kep_gauss_real_filt(:,2), 'Color', repper.color);
-plot (temp.tspan_real/(24*3600)-real.mjd2000_start, real.kep(:,2), 'Color', real.color);
+set(gcf, 'WindowState', 'Maximized')
+plot (per.time_kep_real/(24*3600)-real.mjd2000_start, per.kep_gauss_real(:,2), 'Color', repper.color, 'LineWidth', 2 );
+hold on
+plot (temp.tspan_real/(24*3600)-real.mjd2000_start, real.kep(:,2), 'Color', real.color, 'LineWidth', 2 );
 grid on
 lgd = legend ('Gauss', 'Real');
 set(gca, 'FontSize', 14);
@@ -354,8 +364,10 @@ for i = 3:5
     end
 
     figure();
-    plot (per.time_kep_real/(24*3600)-real.mjd2000_start, per.kep_gauss_real_filt(:,i), 'Color', repper.color);
-    plot (temp.tspan_real/(24*3600)-real.mjd2000_start, real.kep(:,i), 'Color', real.color);
+    set(gcf, 'WindowState', 'Maximized')
+    plot (per.time_kep_real/(24*3600)-real.mjd2000_start, rad2deg(per.kep_gauss_real(:,i)), 'Color', repper.color, 'LineWidth', 2 );
+    hold on
+    plot (temp.tspan_real/(24*3600)-real.mjd2000_start, real.kep(:,i), 'Color', real.color, 'LineWidth', 2 );
     grid on
     lgd = legend ('Gauss', 'Real');
     set(gca, 'FontSize', 14);
@@ -395,11 +407,12 @@ for i = 1 : 2
     filt.kep_gauss = movmean(per.kep_gauss_short(:,i), HFfilter);
     
     figure();
+    set(gcf, 'WindowState', 'Maximized')
     plot (temp.tspan_5day(0.5/5*40000:end-0.5/5*40000)/(24*3600)-real.mjd2000_start, ...
-        per.kep_gauss_short(0.5/5*40000:end-0.5/5*40000,i), 'Color', repper.color);
+        per.kep_gauss_short(0.5/5*40000:end-0.5/5*40000,i), 'Color', repper.color, 'LineWidth', 2 );
     hold on
     plot (temp.tspan_5day(0.5/5*40000:end-0.5/5*40000)/(24*3600)-real.mjd2000_start, ...
-        filt.kep_gauss(0.5/5*40000:end-0.5/5*40000), 'Color', filt.color);
+        filt.kep_gauss(0.5/5*40000:end-0.5/5*40000), 'Color', filt.color, 'LineWidth', 2 );
     grid on
     lgd = legend ('Original Gauss', 'Filtered');
     lgd.Location = 'southeastoutside';
@@ -443,11 +456,12 @@ for i = 3 : 6
     filt.kep_gauss = movmean(per.kep_gauss_short(:,i), HFfilter);
 
     figure();
+    set(gcf, 'WindowState', 'Maximized')
     plot (temp.tspan_5day(0.5/5*40000:end-0.5/5*40000)/(24*3600)-real.mjd2000_start, ...
-        rad2deg(per.kep_gauss_short(0.5/5*40000:end-0.5/5*40000,i)), 'Color', repper.color);
+        rad2deg(per.kep_gauss_short(0.5/5*40000:end-0.5/5*40000,i)), 'Color', repper.color, 'LineWidth', 2 );
     hold on
     plot (temp.tspan_5day(0.5/5*40000:end-0.5/5*40000)/(24*3600)-real.mjd2000_start, ...
-        rad2deg(filt.kep_gauss(0.5/5*40000:end-0.5/5*40000)), 'Color', filt.color);
+        rad2deg(filt.kep_gauss(0.5/5*40000:end-0.5/5*40000)), 'Color', filt.color, 'LineWidth', 2 );
     grid on
     lgd = legend ('Original Gauss', 'Filtered');
     lgd.Location = 'southeastoutside';
