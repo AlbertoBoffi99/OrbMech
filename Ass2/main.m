@@ -42,10 +42,13 @@ repun.kep = [repun.a nominal.kep(2:end)];
 switch choice.GTperiod
     case 1
         temp.tspan = linspace(real.mjd2000_start*24*3600, (real.mjd2000_start+1)*3600*24, 100000);
+        temp.periodstr = '\textit{1 day}';
     case 2
         temp.tspan = linspace(real.mjd2000_start*24*3600, (real.mjd2000_start+10)*3600*24,100000);
+        temp.periodstr = '\textit{10 days}';
     case 3
         temp.tspan = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*3600 + nominal.T, 100000);
+        temp.periodstr = strcat('\textit{1 period = }', num2str(round(nominal.T)), '\textit{ days}');
 end
 
 [nominal.alpha, nominal.delta, nominal.lon, nominal.lat] = groundTrack...
@@ -59,8 +62,6 @@ end
 
 [repper.alpha, repper.delta, repper.lon, repper.lat] = groundTrack_perturbed...
     (repun.kep, deg2rad(nominal.lon0), temp.tspan, astro.wE, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m, nominal.t0);
-
-clear temp
 
 %% INTEGRATION OF PERTURBED ORBITS (SRP and J2)
 
@@ -76,11 +77,15 @@ temp.tspan_real = real.day*24*3600;
 
 % propagation of Keplerian elements
 [per.time_kep, per.kep_gauss] = ode113( @(t,s) gauss_propagation...
-    (t, s, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_3year, nominal.kep', options.ode); 
+    (t, s, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_3year, nominal.kep', options.ode);
 
 % propagation of Keplerian elements comparison with real satellite
 [per.time_kep_real, per.kep_gauss_real] = ode113(@(t,s) gauss_propagation...
-    (t, s, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_real, real.kep0', options.ode); 
+    (t, s, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_3year, real.kep0', options.ode); 
+% HF filtering parameter for movmean
+HFfilter = nominal.T/(3600*24*365*3)*length(temp.tspan_3year);
+% HF filtering
+per.kep_gauss_real_filt = movmean(per.kep_gauss_real(:,1), HFfilter);
 
 % Keplerian elements to cartesian elements
 for j = 1:length(temp.tspan_3year)
@@ -101,13 +106,22 @@ per.kep_unwr(:,6) = unwrap(per.kep(:,6));
 per.kep_unwr(:,4) = unwrap(per.kep(:,4));
 per.kep_unwr(:,5) = unwrap(per.kep(:,5));
 
+%% INTEGRATION OVER SMALL PERIOD FOR FILTERING PLOT
+
+% time interval of integration 
+temp.tspan_5day = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*3600 + 5*3600*24, 40000);
+
+% propagation of Keplerian elements
+[per.time_kep_short, per.kep_gauss_short] = ode113( @(t,s) gauss_propagation...
+    (t, s, astro.muE, astro.RE, astro.J2, astro.cr, astro.A2m), temp.tspan_5day, nominal.kep', options.ode);
+
 %-------------------------------------------------------------------------%
 
 % clock stopped
 fprintf('\nExecution concluded\n')
 toc
 
-%% PLOTTING
+%% PLOTTING and SAVING
 
 % if the user asks for plotting 
 if options.plot
@@ -121,16 +135,5 @@ if options.plot
 
 end
 
-
-%% SAVE RESULTS
-
-% if the user asks for saving results 
-if options.save
-
-    save('.\Results\workspace.mat');
-    fprintf('Results saved\n');
-
-end
-
 % clear workspace
-clearvars -except astro choice fig filt nominal options per real repper repun
+clearvars -except astro choice fig filt nominal options per real repper repun temp

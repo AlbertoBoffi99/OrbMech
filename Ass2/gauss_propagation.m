@@ -50,7 +50,7 @@ function [dy] = gauss_propagation(t,y,muP,Rp,J2,cr,A2m)
     % convertion in cartesian elements
     [rE, vE] = kep2car( kepE(1), kepE(2), kepE(3), kepE(4), kepE(5), kepE(6), muS);
     r_sc_S = - (rE + r); % [km] vector from spacecraft to Sun
-    a_srp_car =  (- psr * (AU)^2 * cr * A2m / norm(r_sc_S)^3 * r_sc_S)/1e+3; % [km/s^2]
+    a_srp_car =  (- psr * (AU)^2 * cr * A2m / norm(r_sc_S)^3 * r_sc_S)/1e3; % [km/s^2]
     
     a_car = a_J2_car + a_srp_car; % [km/s^2] acceleration only by J2 and SRP
     

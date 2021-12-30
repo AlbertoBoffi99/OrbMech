@@ -42,7 +42,7 @@ grid on
 
 % save figure
 if options.save
-    savefig('.\Results\nominal');
+    savefig('nominal');
 end
 
 %% GROUNDTRACKS
@@ -80,7 +80,7 @@ subtitle(subtitle_str, 'FontSize', 14)
 
 % save figure
 if options.save
-    savefig('.\Results\GT1');
+    savefig('GT1');
 end
 
 %-------------------------------------------------------------------------%
@@ -112,7 +112,7 @@ subtitle(subtitle_str, 'FontSize', 14)
 
 % save figure
 if options.save
-    savefig('.\Results\GT2');
+    savefig('GT2');
 end
 
 %% PERTURBED ORBITS
@@ -142,7 +142,7 @@ subtitle("\textit{Integration performed in Cartesian elements}", 'FontSize', 14)
 
 % save figure
 if options.save
-    savefig('.\Results\propcar');
+    savefig('propcar');
 end
 
 % Gauss propagation of the orbit elements
@@ -168,7 +168,7 @@ subtitle("\textit{Integration performed through Gauss propagation of Keplerian e
 
 % save figure
 if options.save
-    savefig('.\Results\propGauss');
+    savefig('propGauss');
 end
 
 %-------------------------------------------------------------------------%
@@ -203,7 +203,7 @@ for i = [1 2]
 
     % save figure
     if options.save
-        filename = strcat('.\Results\err_rel', num2str(i));
+        filename = strcat('err_rel', num2str(i));
         savefig(filename);
     end
     
@@ -222,7 +222,7 @@ for i = [1 2]
 
     % save figure
     if options.save
-        filename = strcat('.\Results\el_prop', num2str(i));
+        filename = strcat('el_prop', num2str(i));
         savefig(filename);
     end
 
@@ -269,7 +269,7 @@ for i = 3 : 6
 
     % save figure
     if options.save
-        filename = strcat('.\Results\err_rel', num2str(i));
+        filename = strcat('err_rel', num2str(i));
         savefig(filename);
     end
     
@@ -288,7 +288,7 @@ for i = 3 : 6
 
     % save figure
     if options.save
-        filename = strcat('.\Results\el_prop', num2str(i));
+        filename = strcat('el_prop', num2str(i));
         savefig(filename);
     end
 
@@ -316,7 +316,7 @@ lgd.FontSize = 16;
 
 % save figure
 if options.save
-    savefig('.\Results\gauss_vs_real1');
+    savefig('gauss_vs_real1');
 end
 
 figure();
@@ -334,7 +334,7 @@ lgd.FontSize = 16;
 
 % save figure
 if options.save
-    savefig('.\Results\gauss_vs_real2');
+    savefig('gauss_vs_real2');
 end
 
 for i = 3:5
@@ -368,7 +368,7 @@ for i = 3:5
 
     % save figure
     if options.save
-        filename = strcat('.\Results\gauss_vs_real', num2str(i));
+        filename = strcat('gauss_vs_real', num2str(i));
         savefig(filename);
     end
 end
@@ -413,7 +413,7 @@ for i = 1 : 2
 
     % save figure
     if options.save
-        filename = strcat('.\Results\filter', num2str(i));
+        filename = strcat('el_prop', num2str(i));
         savefig(filename);
     end
 
@@ -458,10 +458,4 @@ for i = 3 : 6
     title("\textbf{Comparison between Gauss-propagated and filtered keplerian elements}", 'FontSize', 18);
     subtitle(subtitlestr, "FontSize", 14)
     xlim([0.5 4.5])
-
-    % save figure
-    if options.save
-        filename = strcat('.\Results\filter', num2str(i));
-        savefig(filename);
-    end
 end

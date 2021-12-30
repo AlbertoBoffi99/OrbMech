@@ -64,21 +64,13 @@ for j = 1 : 2 : length(real.data)
     real.year(z) = 2000 + floor(real.time(z)/1000);
     real.day(z) = real.time(z) - (real.year(z)-2000)*1000 + real.sidereal_year*floor(real.time(z)/1000); % [days]
     if z > 1
-        if real.day(z) - real.day(z-1) <= 0;
+        if real.day(z) - real.day(z-1) <= 0
             real.day(z) = real.day(z) + 1e-10;
         end
     end
     z = z+1;
 end
 clear z
-
-for i = 2:1:size(real.day,2)
-    
- if real.day(i) == real.day(i-1);
-     real.day(i) = real.day(i-1) + 1e-10;
- end
-
-end
 
 % assigned initial condition
 nominal.a0 = 2.5952e+4; % [km]
@@ -111,7 +103,7 @@ nominal.hp = 5164.654; % [km]
 %       1 for 1 day
 %       2 for 10 days
 %       3 for 1 period
-choice.GTperiod = 3;
+choice.GTperiod = 2;
 
 % Keplerian element to filter:
 %       1 for semi-major axis 'a'
@@ -128,7 +120,7 @@ choice.filtering2 = 1;
 %% OTHER OPTIONS
 
 % ode solver options
-options.ode = odeset( 'RelTol', 1e-6, 'AbsTol', 1e-6);
+options.ode = odeset( 'RelTol', 1e-13, 'AbsTol', 1e-14);
 
 % saving options
 options.save = 1;
