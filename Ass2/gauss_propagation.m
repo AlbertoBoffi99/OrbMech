@@ -8,12 +8,12 @@ function [dy] = gauss_propagation(t,y,muP,Rp,J2,cr,A2m)
 %     [dy] = gauss_propagation(t,y,muP,Rp,J2,cr,A2m)
 %     
 % INPUT 
-%     muP [constant]   gravitational constant of the planet [km^3/s^2]
-%     Rp [constant]    mean radius of the planet [km]
-%     J2 [constant]    gravitatonal field constant of the Earth
-%     cr [constant]    factor dependent upon the optical properties of
+%     muP [scalar]   gravitational constant of the planet [km^3/s^2]
+%     Rp [scalar]    mean radius of the planet [km]
+%     J2 [scalar]    gravitatonal field constant of the Earth
+%     cr [scalar]    factor dependent upon the optical properties of
 %                      the spacecraft surface
-%     A2m[constant]    surface to mass rate [m^2/kg]
+%     A2m[scalar]    surface to mass rate [m^2/kg]
 %
 % OUTPUT
 %     dy [6x1]           Keplerian elements differential equations

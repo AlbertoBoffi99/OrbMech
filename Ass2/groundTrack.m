@@ -1,23 +1,51 @@
-% ground track function 11/10/21
-
 function [alpha, delta, lon, lat] = groundTrack (K_elements, lon0, tspan, omeP, muP, t0)
-
-%% function 
-
+% Propagation of satellite's right ascension, declination, longitude and 
+% latitude during its motion
+% 
+% PROTOTYPE
+%     [alpha, delta, lon, lat] = groundTrack (K_elements, lon0, tspan, omeP, muP, t0)
+%     
+% INPUT 
+%     K_elements [array]       orbital initial Keplerian elements for the
+%                              integration of the satellite orbit
+%     lon0 [scalar]          initial satellite longitude [rad]                                 
+%     tspan [array]            time instants of orbit integration [s]
+%     omeP [scalar]          planet's rotational angular velocity [rad/s]
+%     muP [scalar]           gravitational constant of the planet [km^3/s^2]
+%     t0 [scalar]            initial time for groundtrack calculation [s]
+%
+% OUTPUT
+%     alpha [scalar]           satellite's right ascension [rad]
+%     delta [scalar]           satellite's declination [rad]
+%     lon [scalar]             satellite's longitude [rad]
+%     lat [scalar]             satellite's latitude [rad]
+%
+% CONTRIBUTORS
+%     Alberto Boffi, Enrico Raviola, Andrea Campagna, Luca Ciavirella
+% 
+% VERSION
+%     29-12-2021: v01.0
+%-------------------------------------------------------------------------%
+%% INITIAL SETTINGS
+% from keplerian to cartesian elements
 [r0,v0] = kep2car(K_elements(1), K_elements(2), K_elements(3), K_elements(4), K_elements(5), K_elements(6), muP);
 
 C_elements = [r0; v0];
 
+%% ORBITAL ELEMENTS INTEGRATION
+% setting ode options
 options = odeset( 'RelTol', 1e-13, 'AbsTol', 1e-14 );
 
+% integration
 [ ~, state ] = ode113( @(t,s) tbp_ode(t,s,muP), tspan, C_elements, options );
 
-r = sqrt((state(:,1)).^2 + (state(:,2)).^2 + (state(:,3)).^2);
+%% OUTPUTS
+r = sqrt((state(:,1)).^2 + (state(:,2)).^2 + (state(:,3)).^2); % [km]
 
-% declination in rad
+% satellite's declination 
 delta = asin(state(:,3)./r);
 
-% right ascension in rad
+% satellite's right ascension 
 alpha = [];
 for k = 1:length(tspan)
     
@@ -29,10 +57,12 @@ for k = 1:length(tspan)
 
 end 
 
+% satellite's longitude 
 lon_E = lon0 + omeP*(tspan-t0);
 
 lon = alpha - lon_E;
 
+% satellite's latitude
 lat = delta;
 
 end
