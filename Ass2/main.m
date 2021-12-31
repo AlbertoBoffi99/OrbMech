@@ -1,4 +1,4 @@
-% ASSIGNMENT 2
+6% ASSIGNMENT 2
 %   Study repeating and perturbed orbits around the Earth. Compare the
 %   results with a real satellite trajectory
 

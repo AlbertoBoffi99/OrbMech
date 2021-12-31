@@ -123,7 +123,7 @@ choice.filtering2 = 1;
 options.ode = odeset( 'RelTol', 1e-13, 'AbsTol', 1e-14);
 
 % saving options
-options.save = 1;
+options.save = 0;
 
 % plotting options
 options.plot = 1;

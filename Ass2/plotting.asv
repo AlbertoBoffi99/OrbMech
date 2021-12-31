@@ -105,8 +105,8 @@ geoplot(rad2deg(repun.lat(end)), wrapTo180(rad2deg(repun.lon(end))), 'o', 'Marke
 geoplot( rad2deg(repun.lat), wrapTo180(rad2deg(repun.lon)), 'o', 'MarkerSize', 2, 'Color', repun.color);
 geoplot(rad2deg(repun.lat(1)), wrapTo180(rad2deg(repun.lon(1))), '*', 'MarkerSize', 20, 'LineWidth', 2, 'Color', repun.color);
 geoplot(rad2deg(repun.lat(end)), wrapTo180(rad2deg(repun.lon(end))), 'o', 'MarkerSize', 12, 'LineWidth', 2, 'Color', repun.color);
-lgd = legend('Repeating Perturbed', 'Start', 'End', ...
-    'Repeating Unperturbed', 'Start', 'End');
+lgd = legend('Repeating Unperturbed', 'Start', 'End', ...
+    'Repeating Perturbed', 'Start', 'End');
 lgd.Location = 'southeastoutside';
 lgd.FontSize = 16;
 
