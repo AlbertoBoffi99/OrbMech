@@ -32,7 +32,7 @@ nominal.tspan = linspace(real.mjd2000_start*24*3600, real.mjd2000_start*24*3600 
 [nominal.time nominal.car] = ode113(@(t,s) tbp_ode(t,s,astro.muE), nominal.tspan, [nominal.r0; nominal.v0], options.ode);
 
 
-%% GROUNDTRACKS CALCULATION
+%% GROUND TRACKS CALCULATION
 
 % semi-major axis of an unperturbed repeating groundtrack
 repun.a = repeatingGroundTracks(astro.k, astro.m, astro.muE, astro.wE);

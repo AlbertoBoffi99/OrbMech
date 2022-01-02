@@ -46,7 +46,7 @@ if options.save
     savefig('.\Results\nominal');
 end
 
-%% GROUNDTRACKS
+%% GROUND TRACKS
 
 figure();
 set(gcf, 'WindowState', 'Maximized')
@@ -76,7 +76,7 @@ lgd = legend('Unperturbed', 'Start', 'End', ...
     'Perturbed', 'Start', 'End');
 lgd.Location = 'southeastoutside';
 
-title ('\textbf{Unperturbed, unperturbed and repeating, and perturbed groundtracks}', 'FontSize', 18)
+title ('\textbf{Unperturbed, unperturbed and repeating, and perturbed ground tracks}', 'FontSize', 18)
 subtitle_str = strcat('\textit{Time period: }', temp.periodstr);
 subtitle(subtitle_str, 'FontSize', 14)
 
@@ -110,7 +110,7 @@ lgd = legend('Repeating Perturbed', 'Start', 'End', ...
 lgd.Location = 'southeastoutside';
 lgd.FontSize = 16;
 
-title ('\textbf{Repeating perturbed and uperturbed groundtracks}', 'FontSize', 18)
+title ('\textbf{Repeating perturbed and uperturbed ground tracks}', 'FontSize', 18)
 subtitle_str = strcat('\textit{Time period: }', temp.periodstr);
 subtitle(subtitle_str, 'FontSize', 14)
 
@@ -191,6 +191,7 @@ for i = [1 2]
             denom = nominal.kep(1);
         
         case 2
+            titlestr = "\textbf{Propagation of eccentricity: $e$}";
             subtitlestr = "\textit{eccentricity: } $e$";
             ylabelstr = "e [-]";
             denom = 1;
@@ -268,7 +269,7 @@ for i = 3 : 6
     figure();
     set(gcf, 'WindowState', 'Maximized')
     plot(temp.tspan_3year/(24*3600)-real.mjd2000_start, ...
-        rad2deg(abs(per.kep_unwr(:,i) - per.kep_gauss(:,i)))*100/denom, 'k', 'LineWidth', 2 );
+        abs(per.kep_unwr(:,i) - per.kep_gauss(:,i))*100./denom, 'k', 'LineWidth', 2 );
     grid on
     set(gca, 'FontSize', 14);
     xlabel('time [MJD2000]', 'FontSize', 14)
@@ -387,7 +388,7 @@ for i = 3:5
 end
 
 
-%% FILTERING OF PERTURBED KEPLERIAN ELEMETS
+%% FILTERING OF PERTURBED KEPLERIAN ELEMENTS
 
 HFfilter = nominal.T/(5*24*3600)*length(per.time_kep_short);
 

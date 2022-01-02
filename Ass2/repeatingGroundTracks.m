@@ -1,6 +1,6 @@
 function a_r = repeatingGroundTracks(k, m, muP, omeP)
 % Function to calculate a (semimajor axis) of the satellite's unperturbed
-% orbit that leads to a repeating groundtrack
+% orbit that leads to a repeating ground track
 % 
 % PROTOTYPE
 %     a_r = repeatingGroundTracks(k, m, muP, omeP)
@@ -12,7 +12,7 @@ function a_r = repeatingGroundTracks(k, m, muP, omeP)
 %     omeP [scalar]     planet's rotational angular velocity [rad/s]
 %
 % OUTPUT
-%     a_r [scalar]      repeating groundtrack orbit's semimajor axis [km]
+%     a_r [scalar]      repeating ground track orbit's semimajor axis [km]
 %
 % CONTRIBUTORS
 %     Alberto Boffi, Enrico Raviola, Andrea Campagna, Luca Ciavirella

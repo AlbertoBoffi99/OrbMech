@@ -12,7 +12,7 @@ function [alpha, delta, lon, lat] = groundTrack (K_elements, lon0, tspan, omeP, 
 %     tspan [array]            time instants of orbit integration [s]
 %     omeP [scalar]          planet's rotational angular velocity [rad/s]
 %     muP [scalar]           gravitational constant of the planet [km^3/s^2]
-%     t0 [scalar]            initial time for groundtrack calculation [s]
+%     t0 [scalar]            initial time for ground track calculation [s]
 %
 % OUTPUT
 %     alpha [scalar]           satellite's right ascension [rad]
