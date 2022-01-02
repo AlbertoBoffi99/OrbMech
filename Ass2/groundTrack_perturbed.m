@@ -17,7 +17,7 @@ function [alpha, delta, lon, lat] = groundTrack_perturbed (K_elements, lon0, tsp
 %     cr [scalar]           factor dependent upon the optical properties of
 %                             the spacecraft surface
 %     A2m[scalar]           surface to mass rate [m^2/kg]
-%     t0 [scalar]           initial time for groundtrack calculation [s]
+%     t0 [scalar]           initial time for ground track calculation [s]
 %
 % OUTPUT
 %     alpha [scalar]           satellite's right ascension [rad]
