@@ -48,6 +48,14 @@ optim.tof_minimum = 30;
 
 if options.method == 1
 
+    % mesh settings:
+    % number of elements in departure window vector
+    optim.nmesh_dep = 100;
+    % number of elements in each flyby window vector
+    optim.nmesh_fly = 200;
+    % number of elements in each arrival window vector
+    optim.nmesh_arr = 200;
+
      % mesh settings:
     % number of elements in departure window vector
     optim.nmesh_dep = 300;
@@ -56,9 +64,6 @@ if options.method == 1
     % number of elements in each arrival window vector
     optim.nmesh_arr = 200;
 
-    % random numbre generator settings
-    rng ('shuffle')
-
 
 end
 
@@ -66,14 +71,11 @@ if options.method == 2
 
     % mesh settings:
     % number of elements in departure window vector
-    optim.nmesh_dep = 125;
+    optim.nmesh_dep = 100;
     % number of elements in each flyby window vector
     optim.nmesh_fly = 1;
     % number of elements in each arrival window vector
     optim.nmesh_arr = 1;
-
-    % random numbre generator settings
-    rng ('default')
 
 end
 
@@ -107,6 +109,8 @@ arrival.SW = 0.5*arrival.tof_max/optim.nmesh_arr;
 
 %% FUNCTION OPTIONS
 
+% random numbre generator settings
+rng ('shuffle')
 % options for GA
 options.ga_options = optimoptions("ga","ConstraintTolerance", 1e-6,"PopulationSize", 150, "MaxGenerations", 30, "FunctionTolerance", 1e-6, "Display", "off");%, 'PlotFcn', {@gaplotbestf,@gaplotstopping});
 % options for fmincon
