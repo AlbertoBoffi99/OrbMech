@@ -60,15 +60,15 @@ for j = 1:1:size(departure.window,2)-2;
     ga(JEV, optim.ga_nvars, optim.Acon, optim.Bcon, ...
     [], [], [], [], [], options.ga_options);
 
-    % optimization of Dv using fmincon
-    [temp.dates, temp.Dv, temp.exitflag] = ...
-    fmincon(JEV, temp.dates, optim.Acon, optim.Bcon, ...
-    [], [], [], [], [], options.fmincon_options);
-
     % if the result of ga is not valid delta velocity is not saved
-    if temp.exitflag == -2
+    if temp.exitflag < 0
         temp.Dv = astroConstants(5);
         temp.dates = 1e6 * [1 1 1];
+    else
+        % optimization of Dv using fmincon
+        [temp.dates, temp.Dv, temp.exitflag] = ...
+        fmincon(JEV, temp.dates, optim.Acon, optim.Bcon, ...
+        [], [], [], [], [], options.fmincon_options);
     end
 
     results.ga_Dv(j) = temp.Dv;

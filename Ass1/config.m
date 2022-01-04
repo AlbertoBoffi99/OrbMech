@@ -66,14 +66,14 @@ if options.method == 2
 
     % mesh settings:
     % number of elements in departure window vector
-    optim.nmesh_dep = 125;
+    optim.nmesh_dep = 300;
     % number of elements in each flyby window vector
     optim.nmesh_fly = 1;
     % number of elements in each arrival window vector
     optim.nmesh_arr = 1;
 
     % random numbre generator settings
-    rng ('default')
+    rng ('shuffle')
 
 end
 
@@ -122,7 +122,7 @@ options.Ncase = 0;
 options.LambOptions = 0;
 % plotting options
 options.plot = 1;
-options.pcpfirsttime = 0;
+options.pcpfirsttime = 1;
 
 % this script changes all interpreters from tex to latex
 set(0, 'defaultTextInterpreter', 'latex')

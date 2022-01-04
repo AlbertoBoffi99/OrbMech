@@ -156,3 +156,47 @@ if options.method == 1
 
 end
 
+%% 3D PORK CHOP PLOT
+
+pcp3d = figure();
+scatter3(temp.pcp3d_x, temp.pcp3d_y, temp.pcp3d_z, 80, temp.pcp3d_Dv, 'LineWidth', 2)
+hold on
+scatter3(temp.pcp3dNA_x, temp.pcp3dNA_y, temp.pcp3dNA_z, 50, temp.pcp3dNA_Dv, 'LineWidth', 1.5, 'Marker', '+')
+datetick( 'x', 'yyyy mmm dd', 'keeplimits', 'keepticks');
+datetick( 'y', 'yyyy mmm dd', 'keeplimits');
+datetick( 'z', 'yyyy mmm dd', 'keeplimits');
+xtickangle(45);
+Color = colorbar;
+colormap('turbo')
+xlabel('Jupiter departure date [MJD2000]', 'FontSize', 18);
+ylabel('Earth flyby date [MJD2000]', 'FontSize', 18);
+zlabel('Venus arrival date [MJD2000]', 'FontSize', 18)
+zlim([datenum(2025,08,01), datenum(2065, 08, 01)]);
+caxis([12 100])
+set(Color,'YtickLabel');
+Color.Label.String = '$\Delta v [km/s]$';
+Color.Label.Interpreter = 'latex';
+grid on
+title('\textbf{Dates 3D space Pork Chop Plot}', 'FontSize', 18);
+
+pcp3d = figure();
+scatter3(temp.pcp3d_x, temp.pcp3d_y - temp.pcp3d_x, temp.pcp3d_z - temp.pcp3d_y, 80, temp.pcp3d_Dv, 'LineWidth', 2)
+hold on
+scatter3(temp.pcp3dNA_x, temp.pcp3dNA_y - temp.pcp3dNA_x, temp.pcp3dNA_z - temp.pcp3dNA_y, 50, temp.pcp3dNA_Dv, 'LineWidth', 1.5, 'Marker', '+')
+datetick( 'x', 'yyyy mmm dd', 'keeplimits', 'keepticks');
+xtickangle(45);
+Color = colorbar;
+colormap('turbo')
+xlabel('Jupiter departure date [MJD2000]', 'FontSize', 18);
+ylabel('Jpiter - Earth ToF [days]', 'FontSize', 18);
+zlabel('Earth - Venus ToF [days]', 'FontSize', 18);
+xlim([datenum(2025,08,01), datenum(2065, 08, 01)]);
+zlim([0, arrival.tof_max + 100]);
+ylim([0, departure.tof_max + 100]);
+caxis([12 100])
+set(Color,'YtickLabel');
+Color.Label.String = '$\Delta v [km/s]$';
+Color.Label.Interpreter = 'latex';
+grid on
+title('\textbf{Dates 3D space Pork Chop Plot}', 'FontSize', 18);
+

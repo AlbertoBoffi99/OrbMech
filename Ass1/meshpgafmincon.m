@@ -37,6 +37,10 @@ JEV = @(dates) JEV_lamb_fb_lamb(dates, astro, options);
 % discretize departure window
 departure.window = linspace(departure.date_min, arrival.date_max, optim.nmesh_dep);
 
+% declare index for 3D pork chop plot
+i = 1;
+y = 1;
+
 % open waitbar
 temp.wb = waitbar(0, 'Pattern Optimization Running ...');
 
@@ -46,7 +50,7 @@ for j = 1:1:size(departure.window,2);
     % define the flyby window according to ToF retreived from 1st arc's pork
     % chop plot
     fly.window = linspace(departure.window(j) + departure.tof_min, ...
-        departure.window(j) + departure.tof_max, optim.nmesh_fly);
+        min(departure.window(j) + departure.tof_max, arrival.date_max - arrival.tof_max), optim.nmesh_fly);
     
     % updating waitbar
     waitbar(j/size(departure.window,2), temp.wb);
@@ -83,6 +87,23 @@ for j = 1:1:size(departure.window,2);
                 results.hp = results.rp_norm - astro.RE;
                 results.vp_p = out.vp_p;
                 results.vp_m = out.vp_m;
+            end
+
+            if options.plot
+                if ~out.nanflag
+                    temp.pcp3d_x(y) = datenum(mjd20002date(temp.dates(1)));
+                    temp.pcp3d_y(y) = datenum(mjd20002date(temp.dates(2)));
+                    temp.pcp3d_z(y) = datenum(mjd20002date(temp.dates(3)));
+                    temp.pcp3d_Dv(y) = temp.Dv;
+                    y = y + 1;
+                else
+                    temp.pcp3dNA_x(i) = datenum(mjd20002date(out.dates_disc(1)));
+                    temp.pcp3dNA_y(i) = datenum(mjd20002date(out.dates_disc(2)));
+                    temp.pcp3dNA_z(i) = datenum(mjd20002date(out.dates_disc(3)));
+                    temp.pcp3dNA_Dv(i) = out.Dv_disc;
+                    i = i+1;
+                end
+
             end
         end
     end
@@ -229,5 +250,5 @@ if options.save
 end
 
 % clear workspace
-clearvars -except optim astro options results departure arrival fly
+clearvars -except optim astro options results departure arrival fly temp
 

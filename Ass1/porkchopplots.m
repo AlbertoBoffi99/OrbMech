@@ -9,10 +9,13 @@ if options.pcpfirsttime
 
 %% PRELIMINARY ANALYSIS OF FIRST LAMBERT ARC
 
+temp.n = 1000;
+temp.nplanes = 5;
+
 dep_window = linspace(departure.date_min, arrival.date_max, temp.n);
 fb_window = linspace(departure.date_min, arrival.date_max, temp.n);
 
-temp.Dvmin = astroConstants(5);                                
+temp.Dvmin = astroConstants(5); 
 r = NaN;
 c = NaN;                                                  
 % select an interval to cut the contour plot
@@ -58,13 +61,14 @@ hold on
 [C, h] = contour(x, y, Dvtot', floor(temp.Dvmin) + (planes));
 plot(x(r), y(c), '*', 'LineWidth',12);
 caxis([temp.Dvmin temp.Dvmin + planes(length(planes))]);                                     
-Color = colorbar;                                              
+Color = colorbar;  
+colormap('Turbo')
 clabel(C,h, floor(temp.Dvmin) + (planes));                         
 datetick( 'x', 'yyyy mmm dd', 'keeplimits', 'keepticks');
 datetick( 'y', 'yyyy mmm dd', 'keeplimits');
 xtickangle(45);
-xlabel('Jupiter departure date', 'FontSize', 18);
-ylabel('Earth flyby date', 'FontSize', 18);
+xlabel('Jupiter departure date [MJD2000]', 'FontSize', 18);
+ylabel('Earth flyby date [MJD2000]', 'FontSize', 18);
 set(Color,'YtickLabel');
 Color.Label.String = '$\Delta V1 [km/s]$';
 Color.Label.Interpreter = 'latex';
@@ -129,8 +133,8 @@ clabel(C,h, floor(temp.Dvmin) + (planes));
 datetick( 'x', 'yyyy mmm dd', 'keeplimits', 'keepticks');
 datetick( 'y', 'yyyy mmm dd', 'keeplimits');
 xtickangle(45);
-xlabel('Earth flyby date', 'FontSize', 18);
-ylabel('Venus arrival date', 'FontSize', 18);
+xlabel('Earth flyby date [MJD2000]', 'FontSize', 18);
+ylabel('Venus arrival date [MJD2000]', 'FontSize', 18);
 set(Color,'YtickLabel');
 Color.Label.String = '$\Delta V2 [km/s]$';
 Color.Label.Interpreter = 'latex';
