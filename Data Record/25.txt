@@ -1,0 +1,13 @@
+DATA RECORD:
+     departure date: 6/1/2054 [mm/dd/yyyy] 
+     fly-by date: 12/28/2056 [mm/dd/yyyy] 
+     arrival date: 2/25/2058 [mm/dd/yyyy] 
+
+     total delta velocity needed: 13.3753 [km/s] 
+     delta velocity to begin interplanetary trajectory: 5.85424 [km/s] 
+     natural fly-by delta velocity: 7.01237 [km/s] 
+     powered fly-by delta velocity gven at the perigee: 1.07154 [km/s] 
+     delta velocity to end interplanetary trajectory: 6.45321 [km/s] 
+
+     height of the perigee of the fly-by trajectory: 309.75 [km] 
+     time spent inside Earth's SOI: 146046 [s] 

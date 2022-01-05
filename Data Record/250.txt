@@ -1,0 +1,19 @@
+Execution concluded
+Elapsed time is 4073.891813 seconds.
+
+Plotting started ...
+Plotting concluded
+
+DATA RECORD:
+     departure date: 3/13/2054 [mm/dd/yyyy] 
+     fly-by date: 12/26/2056 [mm/dd/yyyy] 
+     arrival date: 2/23/2058 [mm/dd/yyyy] 
+
+     total delta velocity needed: 13.2613 [km/s] 
+     delta velocity to begin interplanetary trajectory: 5.76848 [km/s] 
+     natural fly-by delta velocity: 7.00329 [km/s] 
+     powered fly-by delta velocity gven at the perigee: 1.03807 [km/s] 
+     delta velocity to end interplanetary trajectory: 6.45476 [km/s] 
+
+     height of the perigee of the fly-by trajectory: 301 [km] 
+     time spent inside Earth's SOI: 145746 [s]
