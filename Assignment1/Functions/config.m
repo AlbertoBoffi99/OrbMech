@@ -43,9 +43,6 @@ optim.Acon = [ -1 0 0;
            1 -1 0;
            0 1 -1];
 
-% minimum ToF of Lambert arcs toavoid absurd velocities
-optim.tof_minimum = 30;
-
 if options.method == 1
 
      % mesh settings:
@@ -81,9 +78,9 @@ optim.noptim = 10;
 % departure window
 departure.date_min = date2mjd2000([2025 08 01 00 00 00]);
 % departure minimum ToF retreived from 1st arc's pork-chop plot
-departure.tof_min = 100;
+departure.tof_min = 500;
 % departure maximum ToF retreived from 1st arc's pork-chop plot
-departure.tof_max = 2500;
+departure.tof_max = 3000;
 % departure semi-window to open GA and fmincon window around a first guess
 departure.SW = 0.5*departure.tof_max/optim.nmesh_dep;
 
@@ -94,9 +91,9 @@ fly.SW = 0.5*departure.tof_max/optim.nmesh_fly;
 % arrival date 
 arrival.date_max = date2mjd2000([2065 08 01 00 00 00]);
 % arrival minimum ToF retreived from 2nd arc's pork-chop plot
-arrival.tof_min = 100;
+arrival.tof_min = 50;
 % arrival maximum ToF retreived from 2nd arc's pork-chop plot
-arrival.tof_max = 2500;
+arrival.tof_max = 1500;
 % arrival semi-window to open GA and fmincon window around a first guess
 arrival.SW = 0.5*arrival.tof_max/optim.nmesh_arr;
 

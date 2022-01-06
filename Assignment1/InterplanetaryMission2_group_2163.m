@@ -54,8 +54,8 @@ for j = 1:1:size(departure.window,2)-2;
              departure.window(j+1) + departure.tof_max + arrival.tof_max; ...
             - departure.date_min; ...
             arrival.date_max;
-            optim.tof_minimum;
-            optim.tof_minimum];
+            departure.tof_min;
+            arrival.tof_min];
 
     % optimization of Dv using ga
     [temp.dates, temp.Dv, temp.exitflag] = ...

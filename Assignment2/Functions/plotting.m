@@ -123,6 +123,10 @@ end
 
 % https://it.mathworks.com/matlabcentral/answers/101346-how-do-i-use-multiple-colormaps-in-a-single-figure-in-r2014a-and-earlier#Example_1
 
+% not to make patch.m colse the last orbit with a straight line
+per.car_gauss3D(end,1:3) = NaN * ones(1,3);
+per.car3D(end,1:3) = NaN * ones(1,3);
+
 % propagation of the orbit in Cartesian elements
 figure();
 set(gcf, 'WindowState', 'Maximized')
@@ -149,7 +153,7 @@ subtitle("\textit{Integration performed in Cartesian elements}", 'FontSize', 14)
 if options.save
     savefig('.\Results\propcar');
 end
-
+%%
 % Gauss propagation of the orbit elements
 figure();
 set(gcf, 'WindowState', 'Maximized')
@@ -161,9 +165,6 @@ c.Label.FontSize = 14;
 c.Label.Interpreter = 'latex';
 set(c.XLabel,{'Rotation','Position'},{0,[0.5 -0.1]})
 set(gca, 'FontSize', 14)
-hold off
-opts.units = 'km';
-planet3D('Earth', opts, [0 0 0]);
 xlabel('$r_x [km]$', 'FontSize', 14)
 ylabel('$r_y [km]$', 'FontSize', 14)
 zlabel('$r_z [km]$', 'FontSize', 14)
@@ -171,6 +172,9 @@ axis equal
 grid on
 title("\textbf{Propagation of the J2 and SRP perturbed orbit}", 'FontSize', 18);
 subtitle("\textit{Integration performed through Gauss propagation of Keplerian elements}", 'FontSize', 14);
+hold off
+opts.units = 'km';
+planet3D('Earth', opts, [0 0 0]);
 
 % save figure
 if options.save
