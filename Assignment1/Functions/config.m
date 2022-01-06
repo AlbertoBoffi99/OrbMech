@@ -56,10 +56,6 @@ if options.method == 1
     % number of elements in each arrival window vector
     optim.nmesh_arr = 250;
 
-    % random numbre generator settings
-    rng ('shuffle')
-
-
 end
 
 if options.method == 2

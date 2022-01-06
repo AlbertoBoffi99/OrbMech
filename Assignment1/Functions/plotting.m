@@ -173,7 +173,7 @@ if options.method == 1
     xlabel('Jupiter departure date [MJD2000]', 'FontSize', 18);
     ylabel('Earth flyby date [MJD2000]', 'FontSize', 18);
     zlabel('Venus arrival date [MJD2000]', 'FontSize', 18)
-    zlim([datenum(2025,08,01), datenum(2065, 08, 01)]);
+    zlim([datenum(2025,08,01), datenum(2056, 08, 01)]);
     caxis([12 100])
     set(Color,'YtickLabel');
     Color.Label.String = '$\Delta v [km/s]$';
@@ -192,7 +192,7 @@ if options.method == 1
     xlabel('Jupiter departure date [MJD2000]', 'FontSize', 18);
     ylabel('Jpiter - Earth ToF [days]', 'FontSize', 18);
     zlabel('Earth - Venus ToF [days]', 'FontSize', 18);
-    xlim([datenum(2025,08,01), datenum(2065, 08, 01)]);
+    xlim([datenum(2025,08,01), datenum(2056, 08, 01)]);
     zlim([0, arrival.tof_max + 100]);
     ylim([0, departure.tof_max + 100]);
     caxis([12 100])
